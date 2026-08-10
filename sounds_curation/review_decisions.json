@@ -1,0 +1,20 @@
+{
+  "belt_112": {
+    "decision": "rejected",
+    "candidate_filename": "belt_112_c0.wav",
+    "note": "",
+    "ts": "2026-08-02T15:07:57.785504+00:00"
+  },
+  "brake_85": {
+    "decision": "rejected",
+    "candidate_filename": "brake_85_c2.wav",
+    "note": "",
+    "ts": "2026-08-02T15:08:37.032703+00:00"
+  },
+  "brake_86": {
+    "decision": "rejected",
+    "candidate_filename": "brake_86_c0.wav",
+    "note": "",
+    "ts": "2026-08-02T15:08:58.622817+00:00"
+  }
+}

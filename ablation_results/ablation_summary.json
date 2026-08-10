@@ -1,0 +1,12 @@
+{
+  "no_augmentation": {
+    "traditional_ml": "FINAL TEST results (winner only) ===\naccuracy=0.9323, macro-F1=0.9323, macro-precision=0.9362, macro-recall=0.9322\n              precision    recall  f1-score   support\n\n        belt       0.86      0.96      0.91        45\n       brake       1.00      1.00      1.00        44\n        sway       0.95      0.84      0.89        44\n\n    accuracy                           0.93       133\n   macro avg       0.94      0.93      0.93       133\nweighted avg       0.94      0.93      0.93       133",
+    "cnn": "Test accuracy: 0.8045\nTest macro-F1: 0.8003\nTest macro-precision: 0.8119\nTest macro-recall: 0.8032\n\n              precision    recall  f1-score   support\n\n        belt       0.77      0.98      0.86        45\n       brake       0.89      0.73      0.80        44\n        sway       0.78      0.70      0.74        44\n\n    accuracy                           0.80       133\n   macro avg       0.81      0.80      0.80       133\nweighted avg       0.81      0.80      0.80       133",
+    "stages_completed_ok": true
+  },
+  "with_augmentation": {
+    "traditional_ml": "FINAL TEST results (winner only) ===\naccuracy=0.8947, macro-F1=0.8950, macro-precision=0.9008, macro-recall=0.8943\n              precision    recall  f1-score   support\n\n        belt       0.83      0.96      0.89        45\n       brake       0.98      0.91      0.94        44\n        sway       0.90      0.82      0.86        44\n\n    accuracy                           0.89       133\n   macro avg       0.90      0.89      0.89       133\nweighted avg       0.90      0.89      0.89       133",
+    "cnn": "Test accuracy: 0.8045\nTest macro-F1: 0.8005\nTest macro-precision: 0.8141\nTest macro-recall: 0.8032\n\n              precision    recall  f1-score   support\n\n        belt       0.76      0.98      0.85        45\n       brake       0.89      0.73      0.80        44\n        sway       0.79      0.70      0.75        44\n\n    accuracy                           0.80       133\n   macro avg       0.81      0.80      0.80       133\nweighted avg       0.81      0.80      0.80       133",
+    "stages_completed_ok": true
+  }
+}

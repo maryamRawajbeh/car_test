@@ -1,0 +1,87 @@
+INFO:     Started server process [2132]
+INFO:     Waiting for application startup.
+2026-08-10 17:44:39,965 WARNING garageai.main: INTERNAL_API_KEY is not set -- /predict and /diagnose/text are reachable by anyone who can reach this service, with no auth check at all. Fine for local dev talking to the Node gateway over localhost, but set INTERNAL_API_KEY before exposing this service beyond localhost.
+2026-08-10 17:44:39,965 INFO garageai.main: Loading GarageAI models... this may take a moment.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1786373149.225330    7372 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1786373214.954220    7372 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+I0000 00:00:1786373221.805449    7372 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-08-10 17:47:03,196 WARNING tensorflow: TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+2026-08-10 17:47:31,283 INFO absl: Fingerprint not found. Saved model loading will continue.
+2026-08-10 17:47:31,283 INFO absl: path_and_singleprint metric could not be logged. Saved model loading will continue.
+2026-08-10 17:47:31,284 INFO garageai.model_loader: PANNs loading skipped (ENABLE_PANNS=false) -- it isn't part of the current ensemble fusion anyway; set ENABLE_PANNS=true in .env to load it.
+2026-08-10 17:47:31,285 INFO garageai.main: Models loaded successfully.
+2026-08-10 17:47:31,285 INFO garageai.main: Loading GarageAI RAG glossary index...
+2026-08-10 17:48:26,145 INFO sentence_transformers.base.model: No device provided, using cpu
+2026-08-10 17:48:26,836 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/modules.json "HTTP/1.1 307 Temporary Redirect"
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-08-10 17:48:26,837 WARNING huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-08-10 17:48:26,846 INFO httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/multilingual-e5-small/614241f622f53c4eeff9890bdc4f31cfecc418b3/modules.json "HTTP/1.1 200 OK"
+2026-08-10 17:48:27,019 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/config_sentence_transformers.json "HTTP/1.1 404 Not Found"
+2026-08-10 17:48:27,020 INFO sentence_transformers.base.model: Loading SentenceTransformer model from intfloat/multilingual-e5-small.
+2026-08-10 17:48:27,178 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/config_sentence_transformers.json "HTTP/1.1 404 Not Found"
+2026-08-10 17:48:27,335 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/README.md "HTTP/1.1 307 Temporary Redirect"
+2026-08-10 17:48:27,351 INFO httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/multilingual-e5-small/614241f622f53c4eeff9890bdc4f31cfecc418b3/README.md "HTTP/1.1 200 OK"
+2026-08-10 17:48:27,506 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/modules.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-10 17:48:27,515 INFO httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/multilingual-e5-small/614241f622f53c4eeff9890bdc4f31cfecc418b3/modules.json "HTTP/1.1 200 OK"
+2026-08-10 17:48:27,676 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/sentence_bert_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-10 17:48:27,687 INFO httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/multilingual-e5-small/614241f622f53c4eeff9890bdc4f31cfecc418b3/sentence_bert_config.json "HTTP/1.1 200 OK"
+2026-08-10 17:48:27,848 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/adapter_config.json "HTTP/1.1 404 Not Found"
+2026-08-10 17:48:28,001 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-10 17:48:28,010 INFO httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/multilingual-e5-small/614241f622f53c4eeff9890bdc4f31cfecc418b3/config.json "HTTP/1.1 200 OK"
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|##########| 199/199 [00:00<00:00, 6050.32it/s]
+2026-08-10 17:48:28,494 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/processor_config.json "HTTP/1.1 404 Not Found"
+2026-08-10 17:48:28,649 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/preprocessor_config.json "HTTP/1.1 404 Not Found"
+2026-08-10 17:48:28,803 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/video_preprocessor_config.json "HTTP/1.1 404 Not Found"
+2026-08-10 17:48:28,961 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/preprocessor_config.json "HTTP/1.1 404 Not Found"
+2026-08-10 17:48:29,112 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-10 17:48:29,121 INFO httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/multilingual-e5-small/614241f622f53c4eeff9890bdc4f31cfecc418b3/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-08-10 17:48:29,284 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-10 17:48:29,294 INFO httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/multilingual-e5-small/614241f622f53c4eeff9890bdc4f31cfecc418b3/config.json "HTTP/1.1 200 OK"
+2026-08-10 17:48:29,464 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-10 17:48:29,479 INFO httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/multilingual-e5-small/614241f622f53c4eeff9890bdc4f31cfecc418b3/config.json "HTTP/1.1 200 OK"
+2026-08-10 17:48:29,635 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-10 17:48:29,647 INFO httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/multilingual-e5-small/614241f622f53c4eeff9890bdc4f31cfecc418b3/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-08-10 17:48:29,815 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-10 17:48:29,831 INFO httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/multilingual-e5-small/614241f622f53c4eeff9890bdc4f31cfecc418b3/tokenizer_config.json "HTTP/1.1 200 OK"
+2026-08-10 17:48:29,986 INFO httpx: HTTP Request: GET https://huggingface.co/api/models/intfloat/multilingual-e5-small/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
+2026-08-10 17:48:30,147 INFO httpx: HTTP Request: GET https://huggingface.co/api/models/intfloat/multilingual-e5-small/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-08-10 17:48:50,036 INFO httpx: HTTP Request: GET https://huggingface.co/api/models/intfloat/multilingual-e5-small "HTTP/1.1 200 OK"
+2026-08-10 17:48:50,410 INFO httpx: HTTP Request: HEAD https://huggingface.co/intfloat/multilingual-e5-small/resolve/main/1_Pooling/config.json "HTTP/1.1 307 Temporary Redirect"
+2026-08-10 17:48:50,419 INFO httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/multilingual-e5-small/614241f622f53c4eeff9890bdc4f31cfecc418b3/1_Pooling%2Fconfig.json "HTTP/1.1 200 OK"
+2026-08-10 17:48:50,612 INFO httpx: HTTP Request: GET https://huggingface.co/api/models/intfloat/multilingual-e5-small "HTTP/1.1 200 OK"
+2026-08-10 17:48:50,780 INFO garageai.main: RAG index ready.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  1.85it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  1.85it/s]
+2026-08-10 17:49:03,485 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 17:49:04,885 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56261 - "POST /diagnose/text HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  2.18it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  2.18it/s]
+2026-08-10 17:49:40,296 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 17:49:41,741 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56278 - "POST /diagnose/text HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:01<00:00,  1.44s/it]Batches: 100%|##########| 1/1 [00:01<00:00,  1.44s/it]
+2026-08-10 17:51:19,225 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 17:51:21,666 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56295 - "POST /diagnose/text HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  3.58it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  3.58it/s]
+2026-08-10 17:51:49,878 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 17:51:51,584 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56299 - "POST /diagnose/text HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  7.92it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  7.90it/s]
+2026-08-10 17:51:52,641 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 17:51:53,966 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56310 - "POST /diagnose/text HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  8.00it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  7.99it/s]
+2026-08-10 17:51:54,959 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 17:51:56,575 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56315 - "POST /diagnose/text HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  7.52it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  7.51it/s]
+2026-08-10 17:52:19,154 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 17:52:20,685 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56320 - "POST /diagnose/text HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56325 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49880 - "GET / HTTP/1.1" 200 OK

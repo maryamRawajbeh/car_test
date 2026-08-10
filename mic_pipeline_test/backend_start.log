@@ -1,0 +1,7 @@
+
+> garageai-backend@1.0.0 start
+> node src/server.js
+
+◇ injected env (7) from .env // tip: ⌘ override existing { override: true }
+GarageAI Backend running on http://localhost:5000
+Swagger available at http://localhost:5000/docs

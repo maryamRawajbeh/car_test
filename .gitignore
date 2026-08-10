@@ -1,0 +1,24 @@
+# Python environment
+venv/
+__pycache__/
+*.pyc
+
+# Large regenerable feature-cache arrays (rebuilt by preprocessing.py / run_augmentation_ablation.py)
+X_train_mel.npy
+X_val_mel.npy
+X_test_mel.npy
+X_train_mfcc.npy
+X_val_mfcc.npy
+X_test_mfcc.npy
+features.csv
+
+# sounds_curation/: caches + downloaded candidates from the concluded Freesound
+# investigation (see SESSION_HANDOFF.md section 3) -- regenerable via
+# freesound_downloader.py + score_candidates.py, not part of the deployed pipeline.
+sounds_curation/candidates/
+sounds_curation/*_cache.pkl
+sounds_curation/manifest.json
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db

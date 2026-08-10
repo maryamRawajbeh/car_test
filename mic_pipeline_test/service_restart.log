@@ -1,0 +1,27 @@
+INFO:     Started server process [7892]
+INFO:     Waiting for application startup.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1786225077.941123   17152 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1786225110.872452   17152 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+I0000 00:00:1786225121.603880   17152 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading GarageAI models... this may take a moment.
+Checkpoint path: C:\Users\hp/panns_data/Cnn14_mAP=0.431.pth
+Using CPU.
+PANNs model loaded.
+Models loaded successfully.
+Loading GarageAI RAG glossary index...
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|##########| 199/199 [00:00<00:00, 16140.99it/s]
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
+RAG index ready.
+INFO:     127.0.0.1:53180 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53219 - "POST /diagnose/text HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53224 - "POST /predict HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53897 - "POST /predict HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53901 - "POST /diagnose/text HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54084 - "GET / HTTP/1.1" 200 OK

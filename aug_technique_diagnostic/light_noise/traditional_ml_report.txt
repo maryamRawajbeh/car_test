@@ -1,0 +1,54 @@
+BEST MODEL: SVM (C=10, gamma=scale)
+
+=== 5-fold CV ranking (TRAIN split only, macro-F1) ===
+SVM (C=10, gamma=scale): cv_macro_F1=0.9294 (+/- 0.0131)
+SVM (C=50, gamma=scale): cv_macro_F1=0.9294 (+/- 0.0131)
+XGBoost (n_estimators=300, max_depth=3, lr=0.1): cv_macro_F1=0.9241 (+/- 0.0090)
+XGBoost (n_estimators=200, max_depth=6, lr=0.1): cv_macro_F1=0.9223 (+/- 0.0085)
+XGBoost (n_estimators=300, max_depth=6, lr=0.1): cv_macro_F1=0.9218 (+/- 0.0099)
+XGBoost (n_estimators=200, max_depth=3, lr=0.1): cv_macro_F1=0.9210 (+/- 0.0102)
+XGBoost (n_estimators=300, max_depth=6, lr=0.05): cv_macro_F1=0.9207 (+/- 0.0112)
+XGBoost (n_estimators=200, max_depth=6, lr=0.05): cv_macro_F1=0.9186 (+/- 0.0098)
+SVM (C=10, gamma=0.001): cv_macro_F1=0.9174 (+/- 0.0219)
+Random Forest (n_estimators=500, max_depth=None): cv_macro_F1=0.9158 (+/- 0.0091)
+Random Forest (n_estimators=500, max_depth=40): cv_macro_F1=0.9158 (+/- 0.0091)
+Random Forest (n_estimators=500, max_depth=20): cv_macro_F1=0.9147 (+/- 0.0100)
+SVM (C=50, gamma=0.001): cv_macro_F1=0.9127 (+/- 0.0205)
+XGBoost (n_estimators=300, max_depth=3, lr=0.05): cv_macro_F1=0.9123 (+/- 0.0104)
+Random Forest (n_estimators=200, max_depth=20): cv_macro_F1=0.9120 (+/- 0.0082)
+Random Forest (n_estimators=300, max_depth=20): cv_macro_F1=0.9115 (+/- 0.0086)
+Random Forest (n_estimators=200, max_depth=None): cv_macro_F1=0.9114 (+/- 0.0068)
+Random Forest (n_estimators=200, max_depth=40): cv_macro_F1=0.9114 (+/- 0.0068)
+Random Forest (n_estimators=300, max_depth=None): cv_macro_F1=0.9114 (+/- 0.0079)
+Random Forest (n_estimators=300, max_depth=40): cv_macro_F1=0.9114 (+/- 0.0079)
+XGBoost (n_estimators=200, max_depth=3, lr=0.05): cv_macro_F1=0.9053 (+/- 0.0108)
+SVM (C=10, gamma=0.01): cv_macro_F1=0.9045 (+/- 0.0113)
+SVM (C=50, gamma=0.01): cv_macro_F1=0.9045 (+/- 0.0113)
+SVM (C=1, gamma=scale): cv_macro_F1=0.9034 (+/- 0.0208)
+SVM (C=1, gamma=0.01): cv_macro_F1=0.8922 (+/- 0.0081)
+SVM (C=1, gamma=0.001): cv_macro_F1=0.8605 (+/- 0.0140)
+
+=== VALIDATION results (winner only, not used for model selection) ===
+accuracy=0.8284, macro-F1=0.8290
+              precision    recall  f1-score   support
+
+        belt       0.88      0.80      0.84        45
+       brake       0.74      0.91      0.82        44
+        sway       0.90      0.78      0.83        45
+
+    accuracy                           0.83       134
+   macro avg       0.84      0.83      0.83       134
+weighted avg       0.84      0.83      0.83       134
+
+
+=== FINAL TEST results (winner only) ===
+accuracy=0.8872, macro-F1=0.8870, macro-precision=0.8901, macro-recall=0.8869
+              precision    recall  f1-score   support
+
+        belt       0.84      0.93      0.88        45
+       brake       0.93      0.91      0.92        44
+        sway       0.90      0.82      0.86        44
+
+    accuracy                           0.89       133
+   macro avg       0.89      0.89      0.89       133
+weighted avg       0.89      0.89      0.89       133

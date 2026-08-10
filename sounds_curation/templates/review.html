@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>sounds\ curation review</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #10131a; --panel: #181c26; --border: #2a2f3a; --text: #e6e9ef; --muted: #8b93a5;
+    --approved: #2e7d4f; --rejected: #b3413a; --unreviewed: #3a4050; --accent: #5b8def;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  #layout { display: flex; height: 100vh; }
+  #sidebar { width: 300px; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+  #tabs { display: flex; border-bottom: 1px solid var(--border); }
+  #tabs button { flex: 1; background: none; border: none; color: var(--muted); padding: 10px 4px; cursor: pointer; font-size: 13px; }
+  #tabs button.active { color: var(--text); border-bottom: 2px solid var(--accent); }
+  #filters { display: flex; gap: 4px; padding: 8px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  #filters button { background: var(--panel); border: 1px solid var(--border); color: var(--muted); padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; }
+  #filters button.active { color: var(--text); border-color: var(--accent); }
+  #sortRow { padding: 6px 10px; border-bottom: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+  #sortRow input { vertical-align: middle; margin-right: 4px; }
+  #progress { padding: 8px 10px; font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  #list { flex: 1; overflow-y: auto; }
+  .row { padding: 8px 10px; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+  .row:hover { background: var(--panel); }
+  .row.selected { background: #22283a; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--unreviewed); }
+  .dot.approved { background: var(--approved); }
+  .dot.rejected { background: var(--rejected); }
+  .row .fn { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .badge { font-size: 9px; padding: 1px 4px; border-radius: 3px; background: #4a3a1a; color: #e0b866; }
+  .badge.mismatch { background: #4a1a1a; color: #e08080; }
+  .badge.confident { background: #1a3a24; color: #7fd99f; }
+  #main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; gap: 18px; }
+  #itemTitle { font-size: 22px; font-weight: 600; }
+  #itemMeta { color: var(--muted); font-size: 13px; text-align: center; }
+  #itemMeta .flag { color: #e0b866; }
+  audio { width: 480px; }
+  #candTabs { display: flex; gap: 8px; }
+  #candTabs button { background: var(--panel); border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 6px; cursor: pointer; }
+  #candTabs button.active { color: var(--text); border-color: var(--accent); }
+  #actions { display: flex; gap: 12px; margin-top: 6px; }
+  #actions button { padding: 12px 28px; border-radius: 8px; border: none; font-size: 15px; cursor: pointer; font-weight: 600; }
+  #approveBtn { background: var(--approved); color: white; }
+  #rejectBtn { background: var(--rejected); color: white; }
+  #skipBtn { background: var(--unreviewed); color: var(--text); }
+  #hint { color: var(--muted); font-size: 12px; margin-top: 10px; }
+  #note { width: 480px; background: var(--panel); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 6px 8px; font-size: 12px; }
+  kbd { background: var(--panel); border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; }
+</style>
+</head>
+<body>
+<div id="layout">
+  <div id="sidebar">
+    <div id="tabs">
+      <button data-label="all" class="active">All</button>
+      <button data-label="belt">Belt</button>
+      <button data-label="brake">Brake</button>
+      <button data-label="sway">Sway</button>
+    </div>
+    <div id="filters">
+      <button data-status="all" class="active">All</button>
+      <button data-status="unreviewed">Unreviewed</button>
+      <button data-status="approved">Approved</button>
+      <button data-status="rejected">Rejected</button>
+    </div>
+    <div id="sortRow">
+      <label><input type="checkbox" id="sortToggle" checked> sort suspicious-first (model check)</label>
+    </div>
+    <div id="progress">loading...</div>
+    <div id="list"></div>
+  </div>
+  <div id="main">
+    <div id="itemTitle">-</div>
+    <div id="itemMeta">-</div>
+    <div id="candTabs"></div>
+    <audio id="player" controls></audio>
+    <input id="note" type="text" placeholder="optional note (e.g. why rejected)">
+    <div id="actions">
+      <button id="rejectBtn">Reject (R)</button>
+      <button id="skipBtn">Skip (S)</button>
+      <button id="approveBtn">Approve (A)</button>
+    </div>
+    <div id="hint">
+      <kbd>A</kbd> approve &nbsp; <kbd>R</kbd> reject &nbsp; <kbd>S</kbd> skip &nbsp;
+      <kbd>&larr;</kbd>/<kbd>&rarr;</kbd> prev/next item &nbsp; <kbd>1</kbd>/<kbd>2</kbd>/<kbd>3</kbd> switch segment &nbsp; <kbd>space</kbd> play/pause
+    </div>
+  </div>
+</div>
+
+<script>
+const MANIFEST = {{ manifest_json|safe }};
+let decisions = {};
+let items = MANIFEST.items;
+let labelFilter = "all";
+let statusFilter = "all";
+let sortSuspiciousFirst = true;
+let selectedIndex = 0;
+let candidateIndex = 0;
+
+function statusOf(id) {
+  const d = decisions[id];
+  return d ? d.decision : "unreviewed";
+}
+
+// Lower = more urgent to listen to carefully. Based on the rank-0 (default
+// played) candidate's model check: a clip the model confidently disagrees
+// with on label floats to the very top; among agreements, the ones the
+// model itself is least sure about come next; unscored clips (score_candidates.py
+// hasn't run) sit in the middle, neutral.
+function priorityOf(it) {
+  const c0 = it.candidates[0];
+  if (!c0 || c0.model_expected_prob == null) return 0.5;
+  const mismatch = c0.model_predicted_label !== it.label;
+  return mismatch ? -2 + c0.model_expected_prob : c0.model_expected_prob;
+}
+
+function visibleItems() {
+  let vis = items.filter(it => {
+    if (labelFilter !== "all" && it.label !== labelFilter) return false;
+    const st = statusOf(it.id);
+    if (statusFilter === "all") return true;
+    if (statusFilter === "unreviewed") return st === "unreviewed" || st === "skip";
+    return st === statusFilter;
+  });
+  if (sortSuspiciousFirst) {
+    vis = vis.slice().sort((a, b) => priorityOf(a) - priorityOf(b));
+  }
+  return vis;
+}
+
+function renderProgress() {
+  const total = items.length;
+  const decided = items.filter(it => ["approved", "rejected"].includes(statusOf(it.id))).length;
+  const approved = items.filter(it => statusOf(it.id) === "approved").length;
+  const rejected = items.filter(it => statusOf(it.id) === "rejected").length;
+  document.getElementById("progress").textContent =
+    `${decided}/${total} reviewed  (${approved} approved, ${rejected} rejected)`;
+}
+
+function renderList() {
+  const list = document.getElementById("list");
+  const vis = visibleItems();
+  list.innerHTML = "";
+  vis.forEach((it) => {
+    const row = document.createElement("div");
+    row.className = "row" + (it === currentItem() ? " selected" : "");
+    const st = statusOf(it.id);
+    const flags = [];
+    if (it.short_file) flags.push({ text: "short" });
+    const c0 = it.candidates[0];
+    if (c0 && c0.low_energy) flags.push({ text: "quiet" });
+    if (c0 && c0.model_expected_prob != null) {
+      const mismatch = c0.model_predicted_label !== it.label;
+      flags.push({ text: `${Math.round(c0.model_expected_prob * 100)}%`, cls: mismatch ? "mismatch" : "confident" });
+    }
+    row.innerHTML = `<span class="dot ${st}"></span><span class="fn">${it.id}</span>` +
+      flags.map(f => `<span class="badge${f.cls ? " " + f.cls : ""}">${f.text}</span>`).join("");
+    row.onclick = () => {
+      selectedIndex = items.indexOf(it);
+      candidateIndex = 0;
+      renderAll();
+    };
+    list.appendChild(row);
+  });
+}
+
+function currentItem() {
+  const vis = visibleItems();
+  if (vis.length === 0) return null;
+  if (!vis.includes(items[selectedIndex])) {
+    selectedIndex = items.indexOf(vis[0]);
+  }
+  return items[selectedIndex];
+}
+
+function renderMain() {
+  const it = currentItem();
+  const player = document.getElementById("player");
+  const note = document.getElementById("note");
+  if (!it) {
+    document.getElementById("itemTitle").textContent = "(nothing matches this filter)";
+    document.getElementById("itemMeta").innerHTML = "";
+    document.getElementById("candTabs").innerHTML = "";
+    player.removeAttribute("src");
+    return;
+  }
+  document.getElementById("itemTitle").textContent = `${it.id}  [${it.label}]`;
+  const cand = it.candidates[Math.min(candidateIndex, it.candidates.length - 1)];
+  const flagBits = [];
+  if (it.short_file) flagBits.push('<span class="flag">short file (&le;5s, not cropped)</span>');
+  if (cand.low_energy) flagBits.push('<span class="flag">quiet / low energy</span>');
+  if (cand.model_expected_prob != null) {
+    const mismatch = cand.model_predicted_label !== it.label;
+    const cls = mismatch ? "badge mismatch" : "badge confident";
+    const txt = mismatch
+      ? `model says ${cand.model_predicted_label} (${Math.round(cand.model_predicted_prob * 100)}%), not ${it.label} (${Math.round(cand.model_expected_prob * 100)}%)`
+      : `model agrees: ${it.label} (${Math.round(cand.model_expected_prob * 100)}%)`;
+    flagBits.push(`<span class="${cls}">${txt}</span>`);
+  }
+  document.getElementById("itemMeta").innerHTML =
+    `source: ${it.source_filename} &middot; orig duration ${it.orig_duration_sec}s @ ${it.orig_samplerate}Hz &middot; ` +
+    `window ${cand.start_sec}s&ndash;${cand.end_sec}s &middot; peak ${cand.peak} &middot; ${cand.rms_dbfs} dBFS` +
+    (flagBits.length ? " &middot; " + flagBits.join(" &middot; ") : "");
+
+  const candTabs = document.getElementById("candTabs");
+  candTabs.innerHTML = "";
+  it.candidates.forEach((c, i) => {
+    const b = document.createElement("button");
+    b.textContent = `segment ${i + 1}`;
+    if (i === candidateIndex) b.classList.add("active");
+    b.onclick = () => { candidateIndex = i; renderMain(); };
+    candTabs.appendChild(b);
+  });
+
+  const wasPlaying = !player.paused && player.src.includes(cand.filename);
+  if (!player.src.includes(cand.filename)) {
+    player.src = "/audio/" + cand.filename;
+  }
+  note.value = (decisions[it.id] && decisions[it.id].note) || "";
+}
+
+function renderAll() {
+  renderList();
+  renderMain();
+  renderProgress();
+}
+
+async function decide(decision) {
+  const it = currentItem();
+  if (!it) return;
+  const cand = it.candidates[Math.min(candidateIndex, it.candidates.length - 1)];
+  const note = document.getElementById("note").value;
+  const resp = await fetch("/api/decision", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: it.id, decision, candidate_filename: cand.filename, note }),
+  });
+  const data = await resp.json();
+  decisions[it.id] = { decision, candidate_filename: cand.filename, note };
+  candidateIndex = 0;
+
+  if (decision === "approved" || decision === "rejected") {
+    // auto-advance to the next unreviewed item in the current view
+    const vis = visibleItems();
+    const idx = vis.indexOf(it);
+    const next = vis.slice(idx + 1).find(x => statusOf(x.id) === "unreviewed") ||
+                 vis.find(x => statusOf(x.id) === "unreviewed");
+    if (next) selectedIndex = items.indexOf(next);
+  } else {
+    moveSelection(1);
+  }
+  renderAll();
+}
+
+function moveSelection(delta) {
+  const vis = visibleItems();
+  const it = currentItem();
+  let idx = vis.indexOf(it);
+  idx = Math.max(0, Math.min(vis.length - 1, idx + delta));
+  if (vis[idx]) selectedIndex = items.indexOf(vis[idx]);
+  candidateIndex = 0;
+}
+
+document.getElementById("approveBtn").onclick = () => decide("approved");
+document.getElementById("rejectBtn").onclick = () => decide("rejected");
+document.getElementById("skipBtn").onclick = () => decide("skip");
+
+document.querySelectorAll("#tabs button").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll("#tabs button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    labelFilter = btn.dataset.label;
+    selectedIndex = 0;
+    renderAll();
+  };
+});
+document.getElementById("sortToggle").onchange = (e) => {
+  sortSuspiciousFirst = e.target.checked;
+  selectedIndex = 0;
+  renderAll();
+};
+
+document.querySelectorAll("#filters button").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll("#filters button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    statusFilter = btn.dataset.status;
+    selectedIndex = 0;
+    renderAll();
+  };
+});
+
+document.addEventListener("keydown", (e) => {
+  if (document.activeElement === document.getElementById("note")) {
+    if (e.key === "Escape") document.activeElement.blur();
+    return;
+  }
+  if (e.key === "a" || e.key === "A") decide("approved");
+  else if (e.key === "r" || e.key === "R") decide("rejected");
+  else if (e.key === "s" || e.key === "S") decide("skip");
+  else if (e.key === "ArrowRight") { moveSelection(1); renderAll(); }
+  else if (e.key === "ArrowLeft") { moveSelection(-1); renderAll(); }
+  else if (["1", "2", "3"].includes(e.key)) {
+    const it = currentItem();
+    if (it && it.candidates[Number(e.key) - 1]) { candidateIndex = Number(e.key) - 1; renderMain(); }
+  } else if (e.key === " ") {
+    e.preventDefault();
+    const p = document.getElementById("player");
+    p.paused ? p.play() : p.pause();
+  }
+});
+
+(async function init() {
+  const resp = await fetch("/api/decisions");
+  decisions = await resp.json();
+  // land on the first unreviewed item in the (suspicious-first, by default) sorted view
+  const vis = visibleItems();
+  const firstUnreviewed = vis.find(it => statusOf(it.id) === "unreviewed");
+  selectedIndex = firstUnreviewed ? items.indexOf(firstUnreviewed) : 0;
+  renderAll();
+})();
+</script>
+</body>
+</html>

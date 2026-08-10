@@ -1,0 +1,18 @@
+Models fused: Traditional ML, CNN, Transfer Learning (YAMNet)
+Weights (chosen on validation set): Traditional ML=0.80, CNN=0.20, Transfer Learning (YAMNet)=0.00
+Validation macro-F1 at these weights: 0.8945
+
+Test accuracy: 0.9248
+Test macro-F1: 0.9246
+Test macro-precision: 0.9279
+Test macro-recall: 0.9247
+
+              precision    recall  f1-score   support
+
+        belt       0.86      0.93      0.89        45
+       brake       0.98      1.00      0.99        44
+        sway       0.95      0.84      0.89        44
+
+    accuracy                           0.92       133
+   macro avg       0.93      0.92      0.92       133
+weighted avg       0.93      0.92      0.92       133

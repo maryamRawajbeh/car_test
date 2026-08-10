@@ -1,0 +1,67 @@
+======================================================================
+Training Traditional ML models: SVM vs Random Forest vs XGBoost (CV-ranked grid search)
+======================================================================
+Classes: [np.str_('belt'), np.str_('brake'), np.str_('sway')]
+Train: (1872, 269) | Val: (134, 269) | Test: (133, 269)
+
+Trying 26 candidate configurations (9 SVM + 9 Random Forest + 8 XGBoost)
+
+[1] Ranking every candidate with 5-fold cross-validation on the TRAIN split only (macro-F1) -- val/test stay untouched until a winner is picked...
+
+   -> SVM (C=1, gamma=scale): CV macro-F1 = 0.9717 (+/- 0.0112)
+   -> SVM (C=1, gamma=0.01): CV macro-F1 = 0.9431 (+/- 0.0079)
+   -> SVM (C=1, gamma=0.001): CV macro-F1 = 0.9552 (+/- 0.0121)
+   -> SVM (C=10, gamma=scale): CV macro-F1 = 0.9792 (+/- 0.0105)
+   -> SVM (C=10, gamma=0.01): CV macro-F1 = 0.9452 (+/- 0.0093)
+   -> SVM (C=10, gamma=0.001): CV macro-F1 = 0.9766 (+/- 0.0094)
+   -> SVM (C=50, gamma=scale): CV macro-F1 = 0.9792 (+/- 0.0105)
+   -> SVM (C=50, gamma=0.01): CV macro-F1 = 0.9452 (+/- 0.0093)
+   -> SVM (C=50, gamma=0.001): CV macro-F1 = 0.9756 (+/- 0.0083)
+   -> Random Forest (n_estimators=200, max_depth=None): CV macro-F1 = 0.9707 (+/- 0.0099)
+   -> Random Forest (n_estimators=200, max_depth=20): CV macro-F1 = 0.9707 (+/- 0.0099)
+   -> Random Forest (n_estimators=200, max_depth=40): CV macro-F1 = 0.9707 (+/- 0.0099)
+   -> Random Forest (n_estimators=300, max_depth=None): CV macro-F1 = 0.9707 (+/- 0.0102)
+   -> Random Forest (n_estimators=300, max_depth=20): CV macro-F1 = 0.9707 (+/- 0.0102)
+   -> Random Forest (n_estimators=300, max_depth=40): CV macro-F1 = 0.9707 (+/- 0.0102)
+   -> Random Forest (n_estimators=500, max_depth=None): CV macro-F1 = 0.9734 (+/- 0.0095)
+   -> Random Forest (n_estimators=500, max_depth=20): CV macro-F1 = 0.9739 (+/- 0.0091)
+   -> Random Forest (n_estimators=500, max_depth=40): CV macro-F1 = 0.9734 (+/- 0.0095)
+   -> XGBoost (n_estimators=200, max_depth=3, lr=0.05): CV macro-F1 = 0.9777 (+/- 0.0146)
+   -> XGBoost (n_estimators=200, max_depth=3, lr=0.1): CV macro-F1 = 0.9824 (+/- 0.0137)
+   -> XGBoost (n_estimators=200, max_depth=6, lr=0.05): CV macro-F1 = 0.9792 (+/- 0.0152)
+   -> XGBoost (n_estimators=200, max_depth=6, lr=0.1): CV macro-F1 = 0.9798 (+/- 0.0162)
+   -> XGBoost (n_estimators=300, max_depth=3, lr=0.05): CV macro-F1 = 0.9803 (+/- 0.0139)
+   -> XGBoost (n_estimators=300, max_depth=3, lr=0.1): CV macro-F1 = 0.9814 (+/- 0.0157)
+   -> XGBoost (n_estimators=300, max_depth=6, lr=0.05): CV macro-F1 = 0.9798 (+/- 0.0159)
+   -> XGBoost (n_estimators=300, max_depth=6, lr=0.1): CV macro-F1 = 0.9792 (+/- 0.0158)
+
+[2] Best configuration by 5-fold CV macro-F1: XGBoost (n_estimators=200, max_depth=3, lr=0.1) (0.9824 +/- 0.0137)
+
+[3] Refitting 'XGBoost (n_estimators=200, max_depth=3, lr=0.1)' on the FULL train split...
+
+[4] Evaluating on the VALIDATION set (held out from model selection entirely)...
+   Val accuracy: 0.8955 | Val macro-F1: 0.8949
+
+[5] Final evaluation of 'XGBoost (n_estimators=200, max_depth=3, lr=0.1)' on the TEST set (never seen before)...
+   Test accuracy: 0.9098
+   Test macro-F1: 0.9101
+   Test macro-precision: 0.9161
+   Test macro-recall: 0.9096
+
+              precision    recall  f1-score   support
+
+        belt       0.82      0.93      0.88        45
+       brake       0.98      0.98      0.98        44
+        sway       0.95      0.82      0.88        44
+
+    accuracy                           0.91       133
+   macro avg       0.92      0.91      0.91       133
+weighted avg       0.92      0.91      0.91       133
+
+
+======================================================================
+DONE. Saved:
+   - best_traditional_model.pkl
+   - traditional_ml_report.txt (CV ranking + val + test metrics)
+   - traditional_confusion_matrix.png
+======================================================================

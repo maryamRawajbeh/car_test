@@ -1,0 +1,327 @@
+BEST MODEL: XGBoost (n_estimators=200, max_depth=6, lr=0.05)
+
+=== Validation results (all models) ===
+
+SVM (C=1, gamma=scale): accuracy=0.8507, macro-F1=0.8515
+              precision    recall  f1-score   support
+
+        belt       0.84      0.82      0.83        45
+       brake       0.78      0.91      0.84        44
+        sway       0.95      0.82      0.88        45
+
+    accuracy                           0.85       134
+   macro avg       0.86      0.85      0.85       134
+weighted avg       0.86      0.85      0.85       134
+
+
+SVM (C=1, gamma=0.01): accuracy=0.8060, macro-F1=0.8046
+              precision    recall  f1-score   support
+
+        belt       0.77      0.89      0.82        45
+       brake       0.77      0.84      0.80        44
+        sway       0.91      0.69      0.78        45
+
+    accuracy                           0.81       134
+   macro avg       0.82      0.81      0.80       134
+weighted avg       0.82      0.81      0.80       134
+
+
+SVM (C=1, gamma=0.001): accuracy=0.8507, macro-F1=0.8507
+              precision    recall  f1-score   support
+
+        belt       0.84      0.84      0.84        45
+       brake       0.83      0.89      0.86        44
+        sway       0.88      0.82      0.85        45
+
+    accuracy                           0.85       134
+   macro avg       0.85      0.85      0.85       134
+weighted avg       0.85      0.85      0.85       134
+
+
+SVM (C=10, gamma=scale): accuracy=0.8433, macro-F1=0.8432
+              precision    recall  f1-score   support
+
+        belt       0.85      0.78      0.81        45
+       brake       0.78      0.91      0.84        44
+        sway       0.90      0.84      0.87        45
+
+    accuracy                           0.84       134
+   macro avg       0.85      0.84      0.84       134
+weighted avg       0.85      0.84      0.84       134
+
+
+SVM (C=10, gamma=0.01): accuracy=0.8134, macro-F1=0.8129
+              precision    recall  f1-score   support
+
+        belt       0.76      0.87      0.81        45
+       brake       0.79      0.86      0.83        44
+        sway       0.91      0.71      0.80        45
+
+    accuracy                           0.81       134
+   macro avg       0.82      0.81      0.81       134
+weighted avg       0.82      0.81      0.81       134
+
+
+SVM (C=10, gamma=0.001): accuracy=0.8433, macro-F1=0.8437
+              precision    recall  f1-score   support
+
+        belt       0.82      0.82      0.82        45
+       brake       0.81      0.86      0.84        44
+        sway       0.90      0.84      0.87        45
+
+    accuracy                           0.84       134
+   macro avg       0.85      0.84      0.84       134
+weighted avg       0.85      0.84      0.84       134
+
+
+SVM (C=50, gamma=scale): accuracy=0.8433, macro-F1=0.8432
+              precision    recall  f1-score   support
+
+        belt       0.85      0.78      0.81        45
+       brake       0.78      0.91      0.84        44
+        sway       0.90      0.84      0.87        45
+
+    accuracy                           0.84       134
+   macro avg       0.85      0.84      0.84       134
+weighted avg       0.85      0.84      0.84       134
+
+
+SVM (C=50, gamma=0.01): accuracy=0.8134, macro-F1=0.8129
+              precision    recall  f1-score   support
+
+        belt       0.76      0.87      0.81        45
+       brake       0.79      0.86      0.83        44
+        sway       0.91      0.71      0.80        45
+
+    accuracy                           0.81       134
+   macro avg       0.82      0.81      0.81       134
+weighted avg       0.82      0.81      0.81       134
+
+
+SVM (C=50, gamma=0.001): accuracy=0.8209, macro-F1=0.8199
+              precision    recall  f1-score   support
+
+        belt       0.80      0.73      0.77        45
+       brake       0.81      0.89      0.85        44
+        sway       0.84      0.84      0.84        45
+
+    accuracy                           0.82       134
+   macro avg       0.82      0.82      0.82       134
+weighted avg       0.82      0.82      0.82       134
+
+
+Random Forest (n_estimators=200, max_depth=None): accuracy=0.8881, macro-F1=0.8871
+              precision    recall  f1-score   support
+
+        belt       0.88      0.82      0.85        45
+       brake       0.85      1.00      0.92        44
+        sway       0.95      0.84      0.89        45
+
+    accuracy                           0.89       134
+   macro avg       0.89      0.89      0.89       134
+weighted avg       0.89      0.89      0.89       134
+
+
+Random Forest (n_estimators=200, max_depth=20): accuracy=0.8806, macro-F1=0.8795
+              precision    recall  f1-score   support
+
+        belt       0.88      0.80      0.84        45
+       brake       0.83      1.00      0.91        44
+        sway       0.95      0.84      0.89        45
+
+    accuracy                           0.88       134
+   macro avg       0.89      0.88      0.88       134
+weighted avg       0.89      0.88      0.88       134
+
+
+Random Forest (n_estimators=200, max_depth=40): accuracy=0.8881, macro-F1=0.8871
+              precision    recall  f1-score   support
+
+        belt       0.88      0.82      0.85        45
+       brake       0.85      1.00      0.92        44
+        sway       0.95      0.84      0.89        45
+
+    accuracy                           0.89       134
+   macro avg       0.89      0.89      0.89       134
+weighted avg       0.89      0.89      0.89       134
+
+
+Random Forest (n_estimators=300, max_depth=None): accuracy=0.8881, macro-F1=0.8870
+              precision    recall  f1-score   support
+
+        belt       0.88      0.80      0.84        45
+       brake       0.85      1.00      0.92        44
+        sway       0.95      0.87      0.91        45
+
+    accuracy                           0.89       134
+   macro avg       0.89      0.89      0.89       134
+weighted avg       0.89      0.89      0.89       134
+
+
+Random Forest (n_estimators=300, max_depth=20): accuracy=0.8806, macro-F1=0.8795
+              precision    recall  f1-score   support
+
+        belt       0.88      0.80      0.84        45
+       brake       0.83      1.00      0.91        44
+        sway       0.95      0.84      0.89        45
+
+    accuracy                           0.88       134
+   macro avg       0.89      0.88      0.88       134
+weighted avg       0.89      0.88      0.88       134
+
+
+Random Forest (n_estimators=300, max_depth=40): accuracy=0.8881, macro-F1=0.8870
+              precision    recall  f1-score   support
+
+        belt       0.88      0.80      0.84        45
+       brake       0.85      1.00      0.92        44
+        sway       0.95      0.87      0.91        45
+
+    accuracy                           0.89       134
+   macro avg       0.89      0.89      0.89       134
+weighted avg       0.89      0.89      0.89       134
+
+
+Random Forest (n_estimators=500, max_depth=None): accuracy=0.8806, macro-F1=0.8800
+              precision    recall  f1-score   support
+
+        belt       0.88      0.80      0.84        45
+       brake       0.81      1.00      0.90        44
+        sway       0.97      0.84      0.90        45
+
+    accuracy                           0.88       134
+   macro avg       0.89      0.88      0.88       134
+weighted avg       0.89      0.88      0.88       134
+
+
+Random Forest (n_estimators=500, max_depth=20): accuracy=0.8731, macro-F1=0.8719
+              precision    recall  f1-score   support
+
+        belt       0.88      0.78      0.82        45
+       brake       0.81      1.00      0.90        44
+        sway       0.95      0.84      0.89        45
+
+    accuracy                           0.87       134
+   macro avg       0.88      0.87      0.87       134
+weighted avg       0.88      0.87      0.87       134
+
+
+Random Forest (n_estimators=500, max_depth=40): accuracy=0.8806, macro-F1=0.8800
+              precision    recall  f1-score   support
+
+        belt       0.88      0.80      0.84        45
+       brake       0.81      1.00      0.90        44
+        sway       0.97      0.84      0.90        45
+
+    accuracy                           0.88       134
+   macro avg       0.89      0.88      0.88       134
+weighted avg       0.89      0.88      0.88       134
+
+
+XGBoost (n_estimators=200, max_depth=3, lr=0.05): accuracy=0.9030, macro-F1=0.9020
+              precision    recall  f1-score   support
+
+        belt       0.88      0.82      0.85        45
+       brake       0.90      1.00      0.95        44
+        sway       0.93      0.89      0.91        45
+
+    accuracy                           0.90       134
+   macro avg       0.90      0.90      0.90       134
+weighted avg       0.90      0.90      0.90       134
+
+
+XGBoost (n_estimators=200, max_depth=3, lr=0.1): accuracy=0.9030, macro-F1=0.9021
+              precision    recall  f1-score   support
+
+        belt       0.88      0.82      0.85        45
+       brake       0.88      1.00      0.94        44
+        sway       0.95      0.89      0.92        45
+
+    accuracy                           0.90       134
+   macro avg       0.90      0.90      0.90       134
+weighted avg       0.90      0.90      0.90       134
+
+
+XGBoost (n_estimators=200, max_depth=6, lr=0.05): accuracy=0.9104, macro-F1=0.9098
+              precision    recall  f1-score   support
+
+        belt       0.88      0.84      0.86        45
+       brake       0.94      1.00      0.97        44
+        sway       0.91      0.89      0.90        45
+
+    accuracy                           0.91       134
+   macro avg       0.91      0.91      0.91       134
+weighted avg       0.91      0.91      0.91       134
+
+
+XGBoost (n_estimators=200, max_depth=6, lr=0.1): accuracy=0.9104, macro-F1=0.9097
+              precision    recall  f1-score   support
+
+        belt       0.88      0.84      0.86        45
+       brake       0.92      1.00      0.96        44
+        sway       0.93      0.89      0.91        45
+
+    accuracy                           0.91       134
+   macro avg       0.91      0.91      0.91       134
+weighted avg       0.91      0.91      0.91       134
+
+
+XGBoost (n_estimators=300, max_depth=3, lr=0.05): accuracy=0.9030, macro-F1=0.9021
+              precision    recall  f1-score   support
+
+        belt       0.88      0.82      0.85        45
+       brake       0.88      1.00      0.94        44
+        sway       0.95      0.89      0.92        45
+
+    accuracy                           0.90       134
+   macro avg       0.90      0.90      0.90       134
+weighted avg       0.90      0.90      0.90       134
+
+
+XGBoost (n_estimators=300, max_depth=3, lr=0.1): accuracy=0.9030, macro-F1=0.9021
+              precision    recall  f1-score   support
+
+        belt       0.88      0.82      0.85        45
+       brake       0.88      1.00      0.94        44
+        sway       0.95      0.89      0.92        45
+
+    accuracy                           0.90       134
+   macro avg       0.90      0.90      0.90       134
+weighted avg       0.90      0.90      0.90       134
+
+
+XGBoost (n_estimators=300, max_depth=6, lr=0.05): accuracy=0.9030, macro-F1=0.9022
+              precision    recall  f1-score   support
+
+        belt       0.88      0.82      0.85        45
+       brake       0.94      1.00      0.97        44
+        sway       0.89      0.89      0.89        45
+
+    accuracy                           0.90       134
+   macro avg       0.90      0.90      0.90       134
+weighted avg       0.90      0.90      0.90       134
+
+
+XGBoost (n_estimators=300, max_depth=6, lr=0.1): accuracy=0.9104, macro-F1=0.9097
+              precision    recall  f1-score   support
+
+        belt       0.88      0.84      0.86        45
+       brake       0.92      1.00      0.96        44
+        sway       0.93      0.89      0.91        45
+
+    accuracy                           0.91       134
+   macro avg       0.91      0.91      0.91       134
+weighted avg       0.91      0.91      0.91       134
+
+
+=== FINAL TEST results (best model only) ===
+accuracy=0.8947, macro-F1=0.8949, macro-precision=0.9018, macro-recall=0.8946
+              precision    recall  f1-score   support
+
+        belt       0.80      0.91      0.85        45
+       brake       0.96      0.98      0.97        44
+        sway       0.95      0.80      0.86        44
+
+    accuracy                           0.89       133
+   macro avg       0.90      0.89      0.89       133
+weighted avg       0.90      0.89      0.89       133

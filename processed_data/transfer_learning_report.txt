@@ -1,0 +1,24 @@
+BEST CLASSIFIER HEAD: Logistic Regression (C=10)
+
+=== Validation results (all candidates) ===
+
+Logistic Regression (C=1): accuracy=0.7388, macro-F1=0.7395
+
+Logistic Regression (C=10): accuracy=0.7537, macro-F1=0.7558
+
+SVM (linear, C=1): accuracy=0.7313, macro-F1=0.7301
+
+SVM (rbf, C=10): accuracy=0.7164, macro-F1=0.7174
+
+=== FINAL TEST results (best model only) ===
+accuracy=0.7820, macro-F1=0.7786, macro-precision=0.7802, macro-recall=0.7810
+
+              precision    recall  f1-score   support
+
+        belt       0.80      0.91      0.85        45
+       brake       0.77      0.68      0.72        44
+        sway       0.77      0.75      0.76        44
+
+    accuracy                           0.78       133
+   macro avg       0.78      0.78      0.78       133
+weighted avg       0.78      0.78      0.78       133

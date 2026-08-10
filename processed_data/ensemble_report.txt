@@ -1,0 +1,20 @@
+Models fused: Traditional ML, CNN, Transfer Learning (YAMNet)
+Fusion strategy chosen (by validation macro-F1): stacking
+  - weighted averaging: val macro-F1=0.8660, Traditional ML=0.30, CNN=0.60, Transfer Learning (YAMNet)=0.10
+  - stacking (Logistic Regression): val macro-F1=0.8727
+Validation macro-F1 of the chosen strategy: 0.8727
+
+Test accuracy: 0.8872
+Test macro-F1: 0.8861
+Test macro-precision: 0.8965
+Test macro-recall: 0.8865
+
+              precision    recall  f1-score   support
+
+        belt       0.81      0.98      0.89        45
+       brake       0.93      0.91      0.92        44
+        sway       0.94      0.77      0.85        44
+
+    accuracy                           0.89       133
+   macro avg       0.90      0.89      0.89       133
+weighted avg       0.90      0.89      0.89       133

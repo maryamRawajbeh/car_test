@@ -1,0 +1,3 @@
+﻿id,file_name,label,brand,model,year,fuel_type,body_type,risk,condition,duration,description,class,audio_dir,matched_path,vehicle_group,split_assigned
+23,sway- 23,,Unknown,Unknown,Unknown,Unknown,Unknown,Medium,Unknown,,Does this sound like sway bar bushings?,sway,C:\Users\hp\Downloads\car_test\sway\sway-cut,C:\Users\hp\Downloads\car_test\sway\sway-cut\sway_023_cut.wav,__unique_sway_618,train
+129,sway- 129,,Unknown,Unknown,2010,Unknown,Unknown,High,Low speed,,Front (right) suspension noise,sway,C:\Users\hp\Downloads\car_test\sway\sway-cut,C:\Users\hp\Downloads\car_test\sway\sway-cut\sway_0129_cut.wav,__unique_sway_724,train

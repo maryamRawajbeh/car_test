@@ -1,0 +1,14 @@
+Test accuracy: 0.7820
+Test macro-F1: 0.7752
+Test macro-precision: 0.7856
+Test macro-recall: 0.7805
+
+              precision    recall  f1-score   support
+
+        belt       0.76      0.98      0.85        45
+       brake       0.82      0.73      0.77        44
+        sway       0.78      0.64      0.70        44
+
+    accuracy                           0.78       133
+   macro avg       0.79      0.78      0.78       133
+weighted avg       0.79      0.78      0.78       133
