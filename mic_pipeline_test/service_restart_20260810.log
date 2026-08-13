@@ -85,3 +85,113 @@ INFO:     127.0.0.1:56315 - "POST /diagnose/text HTTP/1.1" 200 OK
 INFO:     127.0.0.1:56320 - "POST /diagnose/text HTTP/1.1" 200 OK
 INFO:     127.0.0.1:56325 - "GET /health HTTP/1.1" 200 OK
 INFO:     127.0.0.1:49880 - "GET / HTTP/1.1" 200 OK
+2026-08-10 22:48:48,407 INFO garageai.predict: predict request received: name=belt_0485_cut.wav size_bytes=441078
+2026-08-10 22:49:11,924 INFO garageai.predict: predict request succeeded: name=belt_0485_cut.wav prediction=belt confidence=0.591 elapsed_ms=23547.6
+INFO:     127.0.0.1:52853 - "POST /predict HTTP/1.1" 200 OK
+2026-08-10 22:49:55,368 INFO garageai.predict: predict request received: name=belt_0501_cut.wav size_bytes=441078
+2026-08-10 22:49:57,062 INFO garageai.predict: predict request succeeded: name=belt_0501_cut.wav prediction=brake confidence=0.804 elapsed_ms=1698.0
+INFO:     127.0.0.1:52881 - "POST /predict HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52888 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52898 - "GET / HTTP/1.1" 200 OK
+2026-08-10 22:52:14,620 INFO garageai.predict: predict request received: name=belt_0501_cut.wav size_bytes=441078
+2026-08-10 22:52:16,682 INFO garageai.predict: predict request succeeded: name=belt_0501_cut.wav prediction=brake confidence=0.804 elapsed_ms=2069.9
+INFO:     127.0.0.1:52904 - "POST /predict HTTP/1.1" 200 OK
+2026-08-10 22:53:33,192 INFO garageai.predict: predict request received: name=test.wav size_bytes=32
+2026-08-10 22:53:33,328 WARNING garageai.predict: bad input while analyzing test.wav: ffmpeg conversion failed: ffmpeg version 7.1-essentials_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers
+  built with gcc 14.2.0 (Rev1, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      59. 39.100 / 59. 39.100
+  libavcodec     61. 19.100 / 61. 19.100
+  libavformat    61.  7.100 / 61.  7.100
+  libavdevice    61.  3.100 / 61.  3.100
+  libavfilter    10.  4.100 / 10.  4.100
+  libswscale      8.  3.100 /  8.  3.100
+  libswresample   5.  3.100 /  5.  3.100
+  libpostproc    58.  3.100 / 58.  3.100
+[in#0 @ 000001bef99a5140] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\hp\AppData\Local\Temp\a526d5bd-181f-4513-82f3-b372427b3153_raw.wav.
+Error opening input files: Invalid data found when processing input
+
+INFO:     127.0.0.1:52914 - "POST /predict HTTP/1.1" 400 Bad Request
+2026-08-10 22:54:38,465 INFO garageai.predict: predict request received: name=test.wav size_bytes=32
+2026-08-10 22:54:38,570 WARNING garageai.predict: bad input while analyzing test.wav: ffmpeg conversion failed: ffmpeg version 7.1-essentials_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers
+  built with gcc 14.2.0 (Rev1, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      59. 39.100 / 59. 39.100
+  libavcodec     61. 19.100 / 61. 19.100
+  libavformat    61.  7.100 / 61.  7.100
+  libavdevice    61.  3.100 / 61.  3.100
+  libavfilter    10.  4.100 / 10.  4.100
+  libswscale      8.  3.100 /  8.  3.100
+  libswresample   5.  3.100 /  5.  3.100
+  libpostproc    58.  3.100 / 58.  3.100
+[in#0 @ 000001e1391e5140] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\hp\AppData\Local\Temp\8c1d68bf-649c-4ccc-ae54-7b42d7719383_raw.wav.
+Error opening input files: Invalid data found when processing input
+
+INFO:     127.0.0.1:52933 - "POST /predict HTTP/1.1" 400 Bad Request
+2026-08-10 23:00:40,746 INFO garageai.predict: predict request received: name=test.wav size_bytes=32
+2026-08-10 23:00:40,918 WARNING garageai.predict: bad input while analyzing test.wav: ffmpeg conversion failed: ffmpeg version 7.1-essentials_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers
+  built with gcc 14.2.0 (Rev1, Built by MSYS2 project)
+  configuration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-fontconfig --enable-iconv --enable-gnutls --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-zlib --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-sdl2 --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxvid --enable-libaom --enable-libopenjpeg --enable-libvpx --enable-mediafoundation --enable-libass --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-libgme --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libtheora --enable-libvo-amrwbenc --enable-libgsm --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-librubberband
+  libavutil      59. 39.100 / 59. 39.100
+  libavcodec     61. 19.100 / 61. 19.100
+  libavformat    61.  7.100 / 61.  7.100
+  libavdevice    61.  3.100 / 61.  3.100
+  libavfilter    10.  4.100 / 10.  4.100
+  libswscale      8.  3.100 /  8.  3.100
+  libswresample   5.  3.100 /  5.  3.100
+  libpostproc    58.  3.100 / 58.  3.100
+[in#0 @ 00000217e4cc5140] Error opening input: Invalid data found when processing input
+Error opening input file C:\Users\hp\AppData\Local\Temp\f8b992e0-f0e2-4e58-ab61-cbe372402bc4_raw.wav.
+Error opening input files: Invalid data found when processing input
+
+INFO:     127.0.0.1:52982 - "POST /predict HTTP/1.1" 400 Bad Request
+2026-08-10 23:01:09,191 INFO garageai.predict: predict request received: name=Brake pads squealing.wav size_bytes=1722990
+2026-08-10 23:01:11,632 INFO garageai.predict: predict request succeeded: name=Brake pads squealing.wav prediction=brake confidence=0.909 elapsed_ms=2447.7
+INFO:     127.0.0.1:52999 - "POST /predict HTTP/1.1" 200 OK
+2026-08-10 23:02:03,637 INFO garageai.predict: predict request received: name=belt_0489_cut.wav size_bytes=441078
+2026-08-10 23:02:04,582 INFO garageai.predict: predict request succeeded: name=belt_0489_cut.wav prediction=belt confidence=0.881 elapsed_ms=945.5
+INFO:     127.0.0.1:53020 - "POST /predict HTTP/1.1" 200 OK
+2026-08-10 23:02:48,964 INFO garageai.predict: predict request received: name=belt_0491_cut.wav size_bytes=441078
+2026-08-10 23:02:49,836 INFO garageai.predict: predict request succeeded: name=belt_0491_cut.wav prediction=brake confidence=0.481 elapsed_ms=875.6
+INFO:     127.0.0.1:53039 - "POST /predict HTTP/1.1" 200 OK
+2026-08-10 23:03:29,321 INFO garageai.predict: predict request received: name=belt_0500_cut.wav size_bytes=441078
+2026-08-10 23:03:30,212 INFO garageai.predict: predict request succeeded: name=belt_0500_cut.wav prediction=belt confidence=0.912 elapsed_ms=892.1
+INFO:     127.0.0.1:53050 - "POST /predict HTTP/1.1" 200 OK
+2026-08-10 23:10:19,418 INFO garageai.predict: predict request received: name=belt_0485_cut.wav size_bytes=441078
+2026-08-10 23:10:21,148 INFO garageai.predict: predict request succeeded: name=belt_0485_cut.wav prediction=belt confidence=0.591 elapsed_ms=1737.8
+INFO:     127.0.0.1:53149 - "POST /predict HTTP/1.1" 200 OK
+2026-08-10 23:13:08,712 INFO garageai.predict: predict request received: name=belt_0502_cut.wav size_bytes=441078
+2026-08-10 23:13:10,952 INFO garageai.predict: predict request succeeded: name=belt_0502_cut.wav prediction=belt confidence=0.925 elapsed_ms=2248.7
+INFO:     127.0.0.1:53287 - "POST /predict HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:01<00:00,  1.22s/it]Batches: 100%|##########| 1/1 [00:01<00:00,  1.22s/it]
+2026-08-10 23:13:48,926 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 23:13:50,652 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53310 - "POST /diagnose/text HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00, 11.52it/s]
+2026-08-10 23:14:16,658 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 23:14:18,115 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53334 - "POST /diagnose/text HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  6.61it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  6.59it/s]
+2026-08-10 23:27:14,663 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 23:27:15,792 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53776 - "POST /diagnose/text HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00, 13.16it/s]
+2026-08-10 23:27:28,387 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 23:27:29,435 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53785 - "POST /diagnose/text HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00, 10.80it/s]
+2026-08-10 23:27:57,629 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 23:27:59,050 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53804 - "POST /diagnose/text HTTP/1.1" 200 OK
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  8.74it/s]Batches: 100%|##########| 1/1 [00:00<00:00,  8.73it/s]
+2026-08-10 23:28:34,277 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-08-10 23:28:35,754 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:53825 - "POST /diagnose/text HTTP/1.1" 200 OK
+2026-08-10 23:29:16,309 INFO garageai.predict: predict request received: name=brake- tosan 2012 -diesel - motor 1.6.wav size_bytes=1622140
+2026-08-10 23:29:18,537 INFO garageai.predict: predict request succeeded: name=brake- tosan 2012 -diesel - motor 1.6.wav prediction=brake confidence=0.766 elapsed_ms=2239.2
+INFO:     127.0.0.1:53875 - "POST /predict HTTP/1.1" 200 OK
+2026-08-10 23:30:13,832 INFO garageai.predict: predict request received: name=brake.wav size_bytes=869214
+2026-08-10 23:30:14,673 INFO garageai.predict: predict request succeeded: name=brake.wav prediction=brake confidence=0.547 elapsed_ms=843.1
+INFO:     127.0.0.1:53947 - "POST /predict HTTP/1.1" 200 OK

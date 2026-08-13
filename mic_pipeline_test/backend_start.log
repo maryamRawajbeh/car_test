@@ -5,3 +5,5 @@
 ◇ injected env (7) from .env // tip: ⌘ override existing { override: true }
 GarageAI Backend running on http://localhost:5000
 Swagger available at http://localhost:5000/docs
+Error while calling the analysis service: Request failed with status code 400
+Error while calling the analysis service: Request failed with status code 400

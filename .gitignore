@@ -22,3 +22,6 @@ sounds_curation/manifest.json
 # OS/editor cruft
 .DS_Store
 Thumbs.db
+
+# Local Claude Code tooling state (machine-specific, not project source)
+.claude/
