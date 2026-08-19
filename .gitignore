@@ -19,6 +19,16 @@ sounds_curation/candidates/
 sounds_curation/*_cache.pkl
 sounds_curation/manifest.json
 
+# BEATs checkpoint (~344MB, downloaded automatically by train_beats.py on first run from
+# the HF mirror -- see its module docstring). Vendored source files (BEATs.py/backbone.py/
+# modules.py) ARE tracked, just not this binary weights file.
+beats_vendor/*.pt
+
+# EfficientAT checkpoint (~19MB, downloaded automatically via torch.hub by
+# train_efficientat_finetune.py on first run -- model_dir="resources" is set inside the
+# vendored models/mn/model.py itself, relative to wherever the script is run from).
+resources/
+
 # OS/editor cruft
 .DS_Store
 Thumbs.db

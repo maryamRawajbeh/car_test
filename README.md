@@ -141,11 +141,14 @@ Accuracy, Precision, Recall, F1-score (لكل صنف)، **Macro F1-score** (مت
 | الموديل | Test Accuracy | Test Macro-F1 |
 |---|---|---|
 | Traditional ML (SVM، بعد compression augmentation) | 86.47% | 0.8630 |
-| CNN (بعد compression augmentation) | 85.71% | 0.8560 |
+| CNN (بعد compression augmentation) | 83.46% | 0.8312 |
 | YAMNet (Transfer Learning) | 78.20% | 0.7786 |
-| **Ensemble (Stacking: Traditional ML + CNN + YAMNet)** | **88.72%** | **0.8861** |
+| PANNs / CNN14 (Transfer Learning) | 83.46% | 0.8327 |
+| **Ensemble (Weighted Averaging: Traditional=0.30، CNN=0.60، YAMNet=0.10)** | **89.47%** | **0.8933** |
 
-هاي الأرقام مأخوذة مباشرة من `traditional_ml_report.txt` / `cnn_report.txt` / `transfer_learning_report.txt` / `ensemble_report.txt` بـ `processed_data\` — نفس الموديلات المنشورة فعلياً بالخدمة الحية (FastAPI microservice)، بعد إعادة تشغيل `evaluate_ensemble.py` للتأكد إن أوزان الدمج محسوبة على نفس نسخة الموديلين التقليدي والـ CNN المنشورة (مش نسخة قديمة). ملاحظة: XGBoost كان يفوز بالنسخة الأصلية (بدون compression augmentation) بـ 93.2% accuracy، بس SVM صار الأفضل بعد إضافة compression augmentation لمقاومة ضغط الصوت الحقيقي (WebM/Opus) يلي بيصير بالتطبيق الفعلي — راجعوا `SESSION_HANDOFF.md` قسم 4-5 لتفاصيل هاد التريد-أوف والسبب وراه. PANNs (CNN14) مدرّب ومتوفر بس مش جزء من الـ ensemble الحالي (مش محمّل بالخدمة الحية افتراضياً لتوفير الذاكرة).
+هاي الأرقام مأخوذة مباشرة من `traditional_ml_report.txt` / `cnn_report.txt` / `transfer_learning_report.txt` / `panns_report.txt` / `ensemble_report.txt` بـ `processed_data\` — نفس الموديلات المنشورة فعلياً بالخدمة الحية (FastAPI microservice)، بعد إعادة تشغيل `evaluate_ensemble.py` للتأكد إن أوزان الدمج محسوبة على نفس نسخة الموديلين التقليدي والـ CNN المنشورة (مش نسخة قديمة). ملاحظة: XGBoost كان يفوز بالنسخة الأصلية (بدون compression augmentation) بـ 93.2% accuracy، بس SVM صار الأفضل بعد إضافة compression augmentation لمقاومة ضغط الصوت الحقيقي (WebM/Opus) يلي بيصير بالتطبيق الفعلي — راجعوا `SESSION_HANDOFF.md` قسم 4-5 لتفاصيل هاد التريد-أوف والسبب وراه. طريقة الدمج الحالية Weighted Averaging مش Stacking (كانت Stacking بنسخة أقدم، بس تبيّن إن الفرق بينهم كان تذبذب عشوائي على validation set صغير (134 عينة) وليس تحسّن حقيقي — راجعوا القسم أدناه).
+
+**PANNs (CNN14) — جُرّب كنقطة مقارنة إضافية، مش جزء من الإنتاج:** موديل transfer learning أحدث وأكبر من YAMNet (نفس فكرة AudioSet pretraining، بس embedding بحجم 2048 بدل 1024)، الفرضية كانت إنه ممكن يتفوق على YAMNet بحكم حجمه. النتيجة: **83.46% accuracy / 0.8327 macro-F1** — أفضل بوضوح من YAMNet (78.20%)، وشبه متعادل مع الـ CNN (83.46% accuracy / 0.8312 macro-F1 — نفس الـ accuracy تقريباً)، بس لسا أضعف من الموديل التقليدي (86.47% / 0.8630). هاد بيأكد نفس الاستنتاج يلي طلع مع YAMNet: بحجم بيانات المشروع الحالي (~890 ملف)، موديل تقليدي مدرّب من الصفر على features مصممة يدوياً (MFCC) بيتفوق على embeddings من موديلات ضخمة مدربة على داتا مختلفة تماماً (بيئات AudioSet العامة، مش أعطال سيارات). PANNs **مش محمّل بالخدمة الحية ومش جزء من الـ ensemble المنشور** (كلفة ذاكرة/حساب إضافية بدون فايدة تُذكر بالأداء) — موجود فقط كنتيجة موثقة بالتقرير (`train_panns.py`، `processed_data/panns_report.txt`, `panns_confusion_matrix.png`).
 
 **أداء حسب الصنف (نمط ثابت عبر كل التجارب):** صنف **Sway** هو الأصعب دايماً على كل الموديلات (أقل Recall)، غالباً لأنه صوت طقطقة/نقر متقطع أقرب لضجيج عام، بعكس صرير البريك أو القشاط المميزين صوتياً بوضوح أكبر.
 

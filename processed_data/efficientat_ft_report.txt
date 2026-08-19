@@ -1,0 +1,18 @@
+REAL FINE-TUNING (not frozen embeddings) -- mn10_as, last 3 feature blocks + classifier head unfrozen, 30 max epochs, early stopping on val macro-F1 (patience=6).
+Best validation macro-F1 during training: 0.9251
+
+=== FINAL TEST results ===
+accuracy=0.8872, macro-F1=0.8876, macro-precision=0.8986, macro-recall=0.8865
+
+              precision    recall  f1-score   support
+
+        belt       0.81      0.98      0.89        45
+       brake       1.00      0.84      0.91        44
+        sway       0.88      0.84      0.86        44
+
+    accuracy                           0.89       133
+   macro avg       0.90      0.89      0.89       133
+weighted avg       0.90      0.89      0.89       133
+
+
+This is the ONE experiment in the project that actually fine-tunes a pretrained backbone (real backprop) instead of just extracting frozen embeddings -- see README.md for how this compares against traditional ML and against the frozen-embedding transfer-learning models.

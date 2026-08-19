@@ -1,0 +1,27 @@
+BEST CLASSIFIER HEAD: SVM (rbf, C=10)
+
+=== Validation results (all candidates) ===
+
+Logistic Regression (C=1): accuracy=0.8358, macro-F1=0.8362
+
+Logistic Regression (C=10): accuracy=0.8284, macro-F1=0.8287
+
+SVM (linear, C=1): accuracy=0.8284, macro-F1=0.8284
+
+SVM (rbf, C=10): accuracy=0.8358, macro-F1=0.8366
+
+=== FINAL TEST results (best model only) ===
+accuracy=0.8797, macro-F1=0.8783, macro-precision=0.8807, macro-recall=0.8790
+
+              precision    recall  f1-score   support
+
+        belt       0.88      0.98      0.93        45
+       brake       0.93      0.84      0.88        44
+        sway       0.84      0.82      0.83        44
+
+    accuracy                           0.88       133
+   macro avg       0.88      0.88      0.88       133
+weighted avg       0.88      0.88      0.88       133
+
+
+(Comparison point only -- see README.md for why traditional ML is still the recommended production model regardless of this result.)

@@ -1,0 +1,29 @@
+NOTE: classifier head trained on a class-balanced SUBSET of train (201/626 files, seed=42) for CPU-time practicality -- val/test are FULL and untouched, so these numbers are directly comparable to every other model's report in this project.
+
+BEST CLASSIFIER HEAD: Logistic Regression (C=1)
+
+=== Validation results (all candidates) ===
+
+Logistic Regression (C=1): accuracy=0.8358, macro-F1=0.8355
+
+Logistic Regression (C=10): accuracy=0.8209, macro-F1=0.8211
+
+SVM (linear, C=1): accuracy=0.8209, macro-F1=0.8212
+
+SVM (rbf, C=10): accuracy=0.8134, macro-F1=0.8147
+
+=== FINAL TEST results (best model only) ===
+accuracy=0.8421, macro-F1=0.8423, macro-precision=0.8472, macro-recall=0.8418
+
+              precision    recall  f1-score   support
+
+        belt       0.82      0.89      0.85        45
+       brake       0.92      0.80      0.85        44
+        sway       0.80      0.84      0.82        44
+
+    accuracy                           0.84       133
+   macro avg       0.85      0.84      0.84       133
+weighted avg       0.85      0.84      0.84       133
+
+
+(Comparison point only -- see README.md for why traditional ML is still the recommended production model regardless of this result.)

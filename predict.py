@@ -173,15 +173,144 @@ def get_panns_probs(file_path):
     return model.predict_proba(embedding_scaled)[0]
 
 
+def get_ast_probs(file_path):
+    """Uses AST (Audio Spectrogram Transformer) + the saved classifier head from
+    train_ast.py. Note this loads audio at 16kHz (AST's required rate), independent of `config`."""
+    import torch
+    from transformers import ASTFeatureExtractor, ASTModel
+
+    with open(os.path.join(DATA_DIR, "best_ast_model.pkl"), "rb") as f:
+        saved = pickle.load(f)
+    model, scaler = saved["model"], saved["scaler"]
+
+    y, _ = _shared_load_clean_audio(file_path, target_sr=16000, target_duration=5.0, fallback_to_untrimmed=True)
+
+    feature_extractor = ASTFeatureExtractor.from_pretrained("MIT/ast-finetuned-audioset-10-10-0.4593")
+    ast_model = ASTModel.from_pretrained("MIT/ast-finetuned-audioset-10-10-0.4593")
+    ast_model.eval()
+    with torch.no_grad():
+        inputs = feature_extractor([y.astype(np.float32)], sampling_rate=16000, return_tensors="pt")
+        embedding = ast_model(**inputs).last_hidden_state.mean(dim=1).numpy()
+    embedding_scaled = scaler.transform(embedding)
+    return model.predict_proba(embedding_scaled)[0]
+
+
+def get_clap_probs(file_path):
+    """Uses CLAP + the saved classifier head from train_clap.py. Note this loads audio
+    at 48kHz (CLAP's required rate), independent of `config`."""
+    import torch
+    from transformers import ClapProcessor, ClapModel
+
+    with open(os.path.join(DATA_DIR, "best_clap_model.pkl"), "rb") as f:
+        saved = pickle.load(f)
+    model, scaler = saved["model"], saved["scaler"]
+
+    y, _ = _shared_load_clean_audio(file_path, target_sr=48000, target_duration=5.0, fallback_to_untrimmed=True)
+
+    processor = ClapProcessor.from_pretrained("laion/clap-htsat-unfused")
+    clap_model = ClapModel.from_pretrained("laion/clap-htsat-unfused")
+    clap_model.eval()
+    with torch.no_grad():
+        inputs = processor(audio=[y.astype(np.float32)], sampling_rate=48000, return_tensors="pt")
+        embedding = clap_model.get_audio_features(**inputs).pooler_output.numpy()
+    embedding_scaled = scaler.transform(embedding)
+    return model.predict_proba(embedding_scaled)[0]
+
+
+def get_passt_probs(file_path):
+    """Uses PaSST + the saved classifier head from train_passt.py. Note this loads audio
+    at 32kHz (PaSST's required rate), independent of `config`."""
+    import torch
+    from hear21passt.base import load_model, get_scene_embeddings
+
+    with open(os.path.join(DATA_DIR, "best_passt_model.pkl"), "rb") as f:
+        saved = pickle.load(f)
+    model, scaler = saved["model"], saved["scaler"]
+
+    y, _ = _shared_load_clean_audio(file_path, target_sr=32000, target_duration=5.0, fallback_to_untrimmed=True)
+
+    passt_model = load_model(mode="embed_only")
+    passt_model.eval()
+    with torch.no_grad():
+        audio = torch.tensor(y.astype(np.float32)[np.newaxis, :])
+        embedding = get_scene_embeddings(audio, passt_model).numpy()
+    embedding_scaled = scaler.transform(embedding)
+    return model.predict_proba(embedding_scaled)[0]
+
+
+def get_beats_probs(file_path):
+    """Uses BEATs + the saved classifier head from train_beats.py. Note this loads audio
+    at 16kHz (BEATs' required rate), independent of `config`. Needs beats_vendor/ on
+    sys.path and the checkpoint already downloaded there by train_beats.py."""
+    import torch
+    sys.path.insert(0, os.path.join(BASE_DIR, "beats_vendor"))
+    from BEATs import BEATs, BEATsConfig
+
+    with open(os.path.join(DATA_DIR, "best_beats_model.pkl"), "rb") as f:
+        saved = pickle.load(f)
+    model, scaler = saved["model"], saved["scaler"]
+
+    y, _ = _shared_load_clean_audio(file_path, target_sr=16000, target_duration=5.0, fallback_to_untrimmed=True)
+
+    checkpoint_path = os.path.join(BASE_DIR, "beats_vendor", "BEATs_iter3_plus_AS2M.pt")
+    checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+    beats_cfg = BEATsConfig(checkpoint["cfg"])
+    beats_model = BEATs(beats_cfg)
+    beats_model.load_state_dict(checkpoint["model"])
+    beats_model.eval()
+    with torch.no_grad():
+        audio = torch.tensor(y.astype(np.float32)[np.newaxis, :])
+        features, _ = beats_model.extract_features(audio, padding_mask=None)
+        embedding = features.mean(dim=1).numpy()
+    embedding_scaled = scaler.transform(embedding)
+    return model.predict_proba(embedding_scaled)[0]
+
+
+def get_efficientat_ft_probs(file_path):
+    """Uses the fine-tuned EfficientAT (mn10_as) model from train_efficientat_finetune.py.
+    Note this loads audio at 32kHz, independent of `config`, and returns softmax
+    probabilities directly from the fine-tuned classifier head (no separate scaler/
+    sklearn head -- this model was fine-tuned end-to-end, unlike every other transfer-
+    learning model in this file)."""
+    import torch
+    sys.path.insert(0, os.path.join(BASE_DIR, "efficientat_vendor"))
+    from models.mn.model import get_model as get_mn
+    from models.preprocess import AugmentMelSTFT
+    from helpers.utils import NAME_TO_WIDTH
+
+    y, _ = _shared_load_clean_audio(file_path, target_sr=32000, target_duration=5.0, fallback_to_untrimmed=True)
+
+    mel = AugmentMelSTFT(n_mels=128, sr=32000)
+    mel.eval()
+    model = get_mn(num_classes=3, pretrained_name=None, width_mult=NAME_TO_WIDTH("mn10_as"), head_type="mlp")
+    state_dict = torch.load(os.path.join(DATA_DIR, "best_efficientat_ft_model.pt"), map_location="cpu")
+    model.load_state_dict(state_dict)
+    model.eval()
+    with torch.no_grad():
+        waveform = torch.tensor(y.astype(np.float32)[np.newaxis, :])
+        spec = mel(waveform).unsqueeze(1)
+        logits, _ = model(spec)
+        probs = torch.softmax(logits, dim=1).numpy()[0]
+    return probs
+
+
 PROB_SOURCES = {
     "Traditional ML": get_traditional_probs,          # needs (file_path, config)
     "CNN": get_cnn_probs,                              # needs (file_path, config)
     "Transfer Learning (YAMNet)": get_transfer_probs,  # needs (file_path,) only
     "PANNs (CNN14)": get_panns_probs,                  # needs (file_path,) only
+    "AST": get_ast_probs,                              # needs (file_path,) only
+    "CLAP": get_clap_probs,                            # needs (file_path,) only
+    "PaSST": get_passt_probs,                          # needs (file_path,) only
+    "BEATs": get_beats_probs,                          # needs (file_path,) only
+    "EfficientAT (fine-tuned)": get_efficientat_ft_probs,  # needs (file_path,) only
 }
 
 # names that take only (file_path,) instead of (file_path, config)
-_SINGLE_ARG_SOURCES = {"Transfer Learning (YAMNet)", "PANNs (CNN14)"}
+_SINGLE_ARG_SOURCES = {
+    "Transfer Learning (YAMNet)", "PANNs (CNN14)", "AST", "CLAP", "PaSST", "BEATs",
+    "EfficientAT (fine-tuned)",
+}
 
 
 def predict_ensemble(file_path, config):
@@ -288,14 +417,56 @@ def predict_panns(file_path, config):
         print(f"   {cls:10s}: {p*100:.2f}%")
 
 
+def _predict_generic(file_path, model_label, get_probs_fn):
+    """Shared body for the extra comparison models (AST/CLAP/PaSST/BEATs/EfficientAT) --
+    they all just print the model name and the same confidence breakdown."""
+    with open(os.path.join(DATA_DIR, "label_encoder.pkl"), "rb") as f:
+        label_encoder = pickle.load(f)
+    probs = get_probs_fn(file_path)
+    pred = np.argmax(probs)
+    predicted_label = label_encoder.inverse_transform([pred])[0]
+
+    print(f"\nModel used: {model_label}")
+    print("=" * 50)
+    print(f"PREDICTION: {predicted_label.upper()}")
+    print("=" * 50)
+    print("\nConfidence per class:")
+    for cls, p in zip(label_encoder.classes_, probs):
+        print(f"   {cls:10s}: {p*100:.2f}%")
+
+
+def predict_ast(file_path, config):
+    _predict_generic(file_path, "AST (Audio Spectrogram Transformer)", get_ast_probs)
+
+
+def predict_clap(file_path, config):
+    _predict_generic(file_path, "CLAP", get_clap_probs)
+
+
+def predict_passt(file_path, config):
+    _predict_generic(file_path, "PaSST", get_passt_probs)
+
+
+def predict_beats(file_path, config):
+    _predict_generic(file_path, "BEATs", get_beats_probs)
+
+
+def predict_efficientat_ft(file_path, config):
+    _predict_generic(file_path, "EfficientAT (fine-tuned mn10_as)", get_efficientat_ft_probs)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("file_path", nargs="?", help="Path to the .wav file to classify")
-    parser.add_argument("--model", choices=["traditional", "cnn", "transfer", "panns", "ensemble"],
+    parser.add_argument("--model",
+                         choices=["traditional", "cnn", "transfer", "panns", "ast", "clap", "passt",
+                                  "beats", "efficientat_ft", "ensemble"],
                          default="traditional",
                          help="Which trained model to use (default: traditional). 'transfer' uses "
-                              "YAMNet, 'panns' uses PANNs CNN14. 'ensemble' fuses whichever models "
-                              "were trained (needs evaluate_ensemble.py to have run).")
+                              "YAMNet, 'panns' uses PANNs CNN14, 'ast'/'clap'/'passt'/'beats' use "
+                              "those comparison models, 'efficientat_ft' uses the fine-tuned "
+                              "EfficientAT model. 'ensemble' fuses whichever models were trained "
+                              "(needs evaluate_ensemble.py to have run).")
     args = parser.parse_args()
 
     file_path = args.file_path or input("Enter the full path of the .wav file: ").strip().strip('"')
@@ -313,6 +484,16 @@ def main():
         predict_transfer(file_path, config)
     elif args.model == "panns":
         predict_panns(file_path, config)
+    elif args.model == "ast":
+        predict_ast(file_path, config)
+    elif args.model == "clap":
+        predict_clap(file_path, config)
+    elif args.model == "passt":
+        predict_passt(file_path, config)
+    elif args.model == "beats":
+        predict_beats(file_path, config)
+    elif args.model == "efficientat_ft":
+        predict_efficientat_ft(file_path, config)
     elif args.model == "ensemble":
         predict_ensemble(file_path, config)
     else:

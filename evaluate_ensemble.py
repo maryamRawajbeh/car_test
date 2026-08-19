@@ -67,7 +67,23 @@ MODEL_SOURCES = [
     ("CNN", "cnn_val_probs.npy", "cnn_test_probs.npy"),
     ("Transfer Learning (YAMNet)", "transfer_val_probs.npy", "transfer_test_probs.npy"),
     ("PANNs (CNN14)", "panns_val_probs.npy", "panns_test_probs.npy"),
+    ("AST", "ast_val_probs.npy", "ast_test_probs.npy"),
+    ("CLAP", "clap_val_probs.npy", "clap_test_probs.npy"),
+    ("PaSST", "passt_val_probs.npy", "passt_test_probs.npy"),
+    ("BEATs", "beats_val_probs.npy", "beats_test_probs.npy"),
+    ("EfficientAT (fine-tuned)", "efficientat_ft_val_probs.npy", "efficientat_ft_test_probs.npy"),
 ]
+
+# NOTE (2026-08-15): the currently-DEPLOYED ensemble_config.pkl was hand-tuned via a separate
+# nested-CV analysis (see car_test_ensemble_fix_20260811 in project memory / SESSION_HANDOFF.md),
+# NOT by a plain run of this script's own single-split weight/stacking comparison -- that
+# comparison is known to be noisy on a 134-sample validation set, and gets noisier the more
+# models are added to the search (more free parameters, same tiny val set). Do NOT casually
+# re-run this script's main() expecting it to reproduce or safely refresh the deployed config
+# now that AST/CLAP/PaSST/BEATs/EfficientAT are also available here -- it WILL auto-include all
+# of them in the search and overwrite ensemble_config.pkl with an untested result. Fusing the
+# new comparison models into production is a deliberate future decision, not a side effect of
+# running this file.
 
 
 def score_macro_f1(probs, y_true):

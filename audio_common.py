@@ -17,8 +17,53 @@ spectrogram independently. Verified numerically identical (bit-exact
 on synthetic audio) to the original independent-calls version.
 """
 
+import random
+
 import numpy as np
 import librosa
+
+
+def aug_time_shift(y, max_shift_frac=0.1):
+    """Copied verbatim from train_transfer_learning.py (YAMNet) for exact
+    numerical consistency across every script that uses it. Zero-pads the
+    vacated side instead of np.roll, which would otherwise wrap the clip's
+    tail/head around and create an unrealistic click at the seam."""
+    shift = int(len(y) * random.uniform(-max_shift_frac, max_shift_frac))
+    if shift == 0:
+        return y.copy()
+    shifted = np.zeros_like(y)
+    if shift > 0:
+        shifted[shift:] = y[:len(y) - shift]
+    else:
+        shifted[:len(y) + shift] = y[-shift:]
+    return shifted
+
+
+def aug_volume_change(y, low=0.7, high=1.3):
+    """Copied verbatim from train_transfer_learning.py (YAMNet)."""
+    return y * random.uniform(low, high)
+
+
+def aug_add_noise(y, noise_factor=0.001):
+    """Copied verbatim from train_transfer_learning.py (YAMNet). 0.001 (not
+    0.005) -- see that file's comment: 0.005 was empirically ~5.5x more
+    disruptive to the feature vector than the other two augmentation
+    techniques, and measurably hurt the traditional ML model's accuracy."""
+    noise = np.random.randn(len(y)).astype(np.float32)
+    return y + noise_factor * noise
+
+
+def make_augmented_version(y):
+    """Copied verbatim from train_transfer_learning.py (YAMNet): randomly
+    combine 1-3 light augmentations (no pitch shifting -- that could change
+    the diagnostic character of the sound)."""
+    out = y.copy()
+    techniques = random.sample([aug_time_shift, aug_volume_change, aug_add_noise], k=random.randint(1, 3))
+    for t in techniques:
+        out = t(out)
+    if np.max(np.abs(out)) > 0:
+        out = out / np.max(np.abs(out))
+    return out.astype(np.float32)
 
 
 def load_clean_audio(path, target_sr, target_duration=None, top_db=25,
