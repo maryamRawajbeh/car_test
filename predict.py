@@ -455,6 +455,71 @@ def predict_efficientat_ft(file_path, config):
     _predict_generic(file_path, "EfficientAT (fine-tuned mn10_as)", get_efficientat_ft_probs)
 
 
+# Minimum P(other) required to actually report "other" instead of falling through
+# to a normal belt/brake/sway guess -- plain argmax (>0 wins) was too trigger-happy
+# on ambiguous real belt/sway recordings. Picked 2026-08-24 -- CAUTION, first attempt
+# at this (0.65) was picked from ONLY the with_other model's TEST-split "other"
+# probabilities and looked safe (fixed 2/3 known real-fault false negatives for
+# ~1.5% cost) -- but that missed the held-out generalization probes entirely (a
+# SEPARATE, more realistic population representing genuinely novel non-car sounds:
+# Windows alarms/rings/silence/etc that were never in train/val/test at all). At
+# 0.65 those held-out probes have P(other) as low as 50.5%, so 7/31 of them
+# (Alarm05/Alarm10/Ring05/tada/silence/2x am_pink_noise) would have flipped from
+# correctly-caught "other" to a WRONG fault diagnosis -- a real regression, caught
+# by re-testing on a live example (Alarm05.wav -> BELT 57.87%) before shipping.
+# 0.46 is the corrected value: strictly between the worst known real-fault false
+# negative that's fixable this way (sway_0128_cut.wav, P(other)=0.435) and the
+# LOWER of the two populations' minimums (TEST-other min=0.49, held-out min=0.505)
+# -- fixes that one false negative with ZERO measured cost to either population.
+# It does NOT fix the other two known false negatives (belt_0201_cut.wav 0.605,
+# sway_0153_cut.wav 0.80) -- those remain a known, accepted, documented cost.
+# Don't raise this threshold without re-checking BOTH populations (test-split
+# "other" AND the held-out generalization probes), not just one -- see car_test
+# project memory for the full incident and the exact numbers.
+OTHER_GATE_THRESHOLD = 0.46
+
+
+def check_other_gate(file_path, config):
+    """Runs BEFORE any belt/brake/sway model: a genuine supervised 4-class classifier
+    (train_other_class_detector.py) that was trained with real "other" examples
+    (synthetic noise/tones/chirps/chords + real non-car Windows system sounds), not a
+    bolt-on anomaly detector -- those were tried first (IsolationForest / LOF /
+    EllipticEnvelope / z-score, on both MFCC and YAMNet embedding spaces) and
+    empirically failed to generalize (2026-08-22 project history). Returns True if
+    the audio doesn't look like any of the three known fault classes, in which case
+    the caller should report "other" and skip running the requested --model entirely
+    -- belt/brake/sway/CNN/YAMNet/etc. are never asked to force a guess on audio that
+    isn't a car fault sound to begin with.
+
+    Uses a probability THRESHOLD on P(other), not plain argmax -- see
+    OTHER_GATE_THRESHOLD's comment for why (a bare "did other win" rule pushed a few
+    genuine real-fault recordings, mostly ambiguous sway/belt cases, into "other").
+
+    Silently returns False (falls back to the old always-guess-one-of-3 behavior) if
+    the with_other artifacts haven't been trained/deployed -- so this is a no-op until
+    train_other_class_detector.py has actually been run once.
+    """
+    gate_path = os.path.join(DATA_DIR, "best_traditional_model_with_other.pkl")
+    scaler_path = os.path.join(DATA_DIR, "scaler_with_other.pkl")
+    encoder_path = os.path.join(DATA_DIR, "label_encoder_with_other.pkl")
+    if not (os.path.exists(gate_path) and os.path.exists(scaler_path) and os.path.exists(encoder_path)):
+        return False
+
+    with open(gate_path, "rb") as f:
+        gate_model = pickle.load(f)["model"]
+    with open(scaler_path, "rb") as f:
+        gate_scaler = pickle.load(f)
+    with open(encoder_path, "rb") as f:
+        gate_encoder = pickle.load(f)
+
+    y, sr = load_clean_audio(file_path, config["target_sr"], config["target_duration"])
+    feats = extract_mfcc_vector(y, sr, config["n_mfcc"]).reshape(1, -1)
+    feats_scaled = gate_scaler.transform(feats)
+    other_idx = list(gate_encoder.classes_).index("other")
+    prob_other = gate_model.predict_proba(feats_scaled)[0][other_idx]
+    return prob_other >= OTHER_GATE_THRESHOLD
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("file_path", nargs="?", help="Path to the .wav file to classify")
@@ -467,6 +532,9 @@ def main():
                               "those comparison models, 'efficientat_ft' uses the fine-tuned "
                               "EfficientAT model. 'ensemble' fuses whichever models were trained "
                               "(needs evaluate_ensemble.py to have run).")
+    parser.add_argument("--skip-other-gate", action="store_true",
+                         help="Bypass the \"other\" gate and always force a belt/brake/sway guess, "
+                              "matching the old behavior -- mainly for debugging/comparison.")
     args = parser.parse_args()
 
     file_path = args.file_path or input("Enter the full path of the .wav file: ").strip().strip('"')
@@ -477,6 +545,14 @@ def main():
 
     config = load_config()
     print(f"Processing: {file_path}")
+
+    if not args.skip_other_gate and check_other_gate(file_path, config):
+        print("\nModel used: \"Other\" gate (4-class traditional model incl. \"other\")")
+        print("=" * 50)
+        print("PREDICTION: OTHER (doesn't look like belt, brake, or sway)")
+        print("=" * 50)
+        print("\n(Pass --skip-other-gate to force a belt/brake/sway guess anyway.)")
+        return
 
     if args.model == "cnn":
         predict_cnn(file_path, config)
