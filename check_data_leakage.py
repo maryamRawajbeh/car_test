@@ -20,6 +20,8 @@ warnings.filterwarnings("ignore")
 
 import pandas as pd
 
+from preprocessing import build_vehicle_groups
+
 BASE_DIR = r"C:\Users\hp\Desktop\car_test"
 DATA_DIR = os.path.join(BASE_DIR, "processed_data")
 
@@ -45,12 +47,18 @@ def main():
             print(f"\n!! Column '{col}' not found in your Excel metadata - cannot fully check vehicle grouping.")
             meta[col] = "unknown"
 
-    meta["vehicle_id"] = (
-        meta["class"].astype(str) + "_" +
-        meta["brand"].astype(str).str.lower().str.strip() + "_" +
-        meta["model"].astype(str).str.lower().str.strip() + "_" +
-        meta["year"].astype(str).str.strip()
-    )
+    # Reuses preprocessing.py's ACTUAL grouping logic (the one that really determined
+    # the train/val/test split) instead of a separately hand-rolled string-concat here.
+    # The two used to disagree on how to treat placeholder values ("Unknown", "N/A",
+    # empty, ...): preprocessing.py's build_vehicle_groups() gives each such row its
+    # own singleton group (so two different vehicles that both just happen to have
+    # brand="Unknown" are never treated as the same vehicle), but this script's old
+    # inline logic merged them by the literal string "unknown" -- which manufactured
+    # false-positive "leakage" for placeholder-metadata rows that preprocessing.py's
+    # real split never actually grouped together. Importing the same function makes
+    # the two impossible to drift apart again, the same principle audio_common.py
+    # already applies to feature extraction across this project's scripts.
+    meta["vehicle_id"] = build_vehicle_groups(meta)
 
     print(f"\nTotal matched files analyzed: {len(meta)}")
     print(f"Total unique vehicles (class+brand+model+year combinations): {meta['vehicle_id'].nunique()}")
