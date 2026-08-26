@@ -3,6 +3,22 @@ venv/
 __pycache__/
 *.pyc
 
+# Raw training audio + every trained-model/experiment artifact this project produces.
+# These were previously tracked (1006 files, ~1.85GB across belt/brake/sway +
+# processed_data/ alone, plus ablation_results/ and aug_technique_diagnostic/'s own
+# copies of trained models from earlier experiments) in this repo's git history --
+# regenerable from the raw audio via preprocessing.py + the train_*.py scripts, and
+# not meant to be pushed to a public remote. Untracked going forward (see the commit
+# that added this comment); the data still exists in past commits until the history
+# itself is rewritten -- that's a separate, deliberate decision, not done here.
+belt/
+brake/
+sway/
+processed_data/
+processed_data_backup_*/
+ablation_results/
+aug_technique_diagnostic/
+
 # Large regenerable feature-cache arrays (rebuilt by preprocessing.py / run_augmentation_ablation.py)
 X_train_mel.npy
 X_val_mel.npy
