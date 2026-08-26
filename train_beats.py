@@ -112,8 +112,11 @@ TRAIN_SUBSET_SEED = 42
 CLASSIFIER_GRID = {
     "Logistic Regression (C=1)": lambda: LogisticRegression(C=1, max_iter=2000, class_weight="balanced"),
     "Logistic Regression (C=10)": lambda: LogisticRegression(C=10, max_iter=2000, class_weight="balanced"),
-    "SVM (linear, C=1)": lambda: SVC(kernel="linear", C=1, probability=True, class_weight="balanced"),
-    "SVM (rbf, C=10)": lambda: SVC(kernel="rbf", C=10, gamma="scale", probability=True, class_weight="balanced"),
+    # probability=True deliberately OMITTED here -- see the refit-the-winner block near
+    # best_model selection below for why (it's a known pathological SVC slowdown, confirmed
+    # to hang for 17+ CPU-hours on this project's own data at full scale).
+    "SVM (linear, C=1)": lambda: SVC(kernel="linear", C=1, class_weight="balanced"),
+    "SVM (rbf, C=10)": lambda: SVC(kernel="rbf", C=10, gamma="scale", class_weight="balanced"),
 }
 
 
@@ -254,6 +257,15 @@ def main():
     best_name = max(val_results, key=lambda n: val_results[n]["f1_macro"])
     best_model = trained[best_name]
     print(f"\n[5] Best classifier head on validation set: {best_name}")
+
+    if isinstance(best_model, SVC) and not best_model.probability:
+        print(f"    (refitting {best_name} with probability=True for calibrated predict_proba -- "
+              f"skipped during search to avoid SVC's internal 5-fold Platt-scaling CV, a known "
+              f"pathological slowdown on some datasets)")
+        best_model = CLASSIFIER_GRID[best_name]()
+        best_model.probability = True
+        best_model.fit(X_train, y_train)
+        trained[best_name] = best_model
 
     print(f"\n[6] Final evaluation of '{best_name}' on the TEST set (never seen before)...")
     test_res = evaluate(best_model, X_test, y_test, class_names)

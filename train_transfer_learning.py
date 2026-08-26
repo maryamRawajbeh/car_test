@@ -107,8 +107,15 @@ def load_yamnet():
 CLASSIFIER_GRID = {
     "Logistic Regression (C=1)": lambda: LogisticRegression(C=1, max_iter=2000, class_weight="balanced"),
     "Logistic Regression (C=10)": lambda: LogisticRegression(C=10, max_iter=2000, class_weight="balanced"),
-    "SVM (linear, C=1)": lambda: SVC(kernel="linear", C=1, probability=True, class_weight="balanced"),
-    "SVM (rbf, C=10)": lambda: SVC(kernel="rbf", C=10, gamma="scale", probability=True, class_weight="balanced"),
+    # probability=True deliberately OMITTED here: CalibratedClassifierCV below already wraps
+    # every candidate in its OWN external 5-fold calibration and does not need the base
+    # estimator to support predict_proba at all -- so probability=True here would just stack
+    # a SECOND, redundant internal 5-fold Platt-scaling CV underneath (up to ~25x the fit cost
+    # for nothing), which is a known pathological slowdown on some datasets (confirmed to hang
+    # for 17+ CPU-hours on this project's own data at full scale, in a sibling script that
+    # didn't even have the extra CalibratedClassifierCV wrapper).
+    "SVM (linear, C=1)": lambda: SVC(kernel="linear", C=1, class_weight="balanced"),
+    "SVM (rbf, C=10)": lambda: SVC(kernel="rbf", C=10, gamma="scale", class_weight="balanced"),
 }
 
 # A linear classifier on top of 1024-dim YAMNet embeddings, fit on a few thousand

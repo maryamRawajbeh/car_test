@@ -48,7 +48,9 @@ ABLATION_DIR = os.path.join(SCRIPT_DIR, "ablation_results")
 # is the fix (TRAIN-only clips round-tripped through that same real pipeline, see
 # compression_augment.py). Verifying it holds up over 5 independent CNN training runs,
 # not just the one lucky/unlucky run already done, before it goes anywhere near production.
-CONDITIONS = ["compression_augmented", "compression_and_mic_augmented"]
+# Default kept as-is for backward compat; override with --conditions for other studies
+# (e.g. --conditions no_augmentation,with_augmentation for the original waveform-aug axis).
+DEFAULT_CONDITIONS = ["compression_augmented", "compression_and_mic_augmented"]
 
 EPOCHS = 40
 BATCH_SIZE = 16
@@ -105,7 +107,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--repeats", type=int, default=5)
     parser.add_argument("--base-seed", type=int, default=42)
+    parser.add_argument("--conditions", default=",".join(DEFAULT_CONDITIONS),
+                         help="Comma-separated ablation_results/<name> subfolders to compare")
     args = parser.parse_args()
+    CONDITIONS = args.conditions.split(",")
 
     all_results = {}
     for cond in CONDITIONS:

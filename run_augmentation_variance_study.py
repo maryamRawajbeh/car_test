@@ -42,12 +42,23 @@ via predict.py) -- this is a separate study, separate output file.
 
 HOW TO RUN:
     cd C:\Users\hp\Desktop\car_test
-    python run_augmentation_variance_study.py [--models ast,clap] [--seeds 1,2,3,4,5]
+    python run_augmentation_variance_study.py [--models ast,clap] [--seeds 1,2,3,4,5] [--full-data]
+
+UPDATE (graduation-project comprehensive benchmark): added "yamnet" and
+"panns" model keys (previously only had their own one-shot single-run
+reports, no seed/augmentation variance study like AST/CLAP/PaSST/BEATs
+got) and a --full-data flag that trains on the ENTIRE train split
+(~626 files) instead of the 67-per-class (~201) subset used for the
+original 4-model speed-motivated study -- for the full comprehensive
+sweep the whole point is the real, undiminished dataset. Subset mode
+(the default, unchanged) is kept for anyone who wants the original
+fast/cheap comparison.
 """
 
 import os
 import sys
 import csv
+import random
 import argparse
 import warnings
 warnings.filterwarnings("ignore")
@@ -71,11 +82,17 @@ TRAIN_SUBSET_PER_CLASS = 67  # same as the main comparison-table scripts (~200 t
 N_AUGMENTATIONS_PER_TRAIN_FILE = 3  # same convention as train_transfer_learning.py (YAMNet)
 BATCH_SIZE = 8
 
+# probability=True deliberately OMITTED here: it turns on an internal 5-fold Platt-scaling
+# CV inside SVC.fit() that is a known pathological slowdown on some datasets (can take HOURS
+# instead of seconds, confirmed directly -- yamnet seed=2/augment=True with n=2504 hung for
+# 17+ CPU-hours before being killed). evaluate_config() below only ever calls .predict(), never
+# .predict_proba(), so it isn't needed -- same reasoning train_traditional_ml.py's
+# build_candidate_specs() already documents for its own SVM search.
 CLASSIFIER_GRID = {
     "Logistic Regression (C=1)": lambda: LogisticRegression(C=1, max_iter=2000, class_weight="balanced"),
     "Logistic Regression (C=10)": lambda: LogisticRegression(C=10, max_iter=2000, class_weight="balanced"),
-    "SVM (linear, C=1)": lambda: SVC(kernel="linear", C=1, probability=True, class_weight="balanced"),
-    "SVM (rbf, C=10)": lambda: SVC(kernel="rbf", C=10, gamma="scale", probability=True, class_weight="balanced"),
+    "SVM (linear, C=1)": lambda: SVC(kernel="linear", C=1, class_weight="balanced"),
+    "SVM (rbf, C=10)": lambda: SVC(kernel="rbf", C=10, gamma="scale", class_weight="balanced"),
 }
 
 
@@ -137,6 +154,30 @@ def build_model_context(model_key):
                 return features.mean(dim=1).numpy()
         return load_clean_audio_16k, embed_batch
 
+    elif model_key == "yamnet":
+        from train_transfer_learning import load_yamnet, load_clean_audio_16k
+
+        model = load_yamnet()
+
+        def embed_batch(batch):
+            out = []
+            for y in batch:
+                _, frame_embeddings, _ = model(y)
+                out.append(np.mean(frame_embeddings.numpy(), axis=0))
+            return np.array(out)
+        return load_clean_audio_16k, embed_batch
+
+    elif model_key == "panns":
+        from train_panns import load_panns_model, load_clean_audio_32k
+
+        model = load_panns_model()
+
+        def embed_batch(batch):
+            batch_audio = np.stack(batch)
+            _, embedding = model.inference(batch_audio)
+            return embedding
+        return load_clean_audio_32k, embed_batch
+
     else:
         raise ValueError(f"Unknown model_key: {model_key}")
 
@@ -185,9 +226,12 @@ def evaluate_config(load_audio_fn, embed_batch_fn, train_paths, train_labels,
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--models", default="ast,clap,passt,beats",
-                         help="Comma-separated subset of: ast,clap,passt,beats")
+    parser.add_argument("--models", default="ast,clap,passt,beats,yamnet,panns",
+                         help="Comma-separated subset of: ast,clap,passt,beats,yamnet,panns")
     parser.add_argument("--seeds", default="1,2,3,4,5", help="Comma-separated seeds")
+    parser.add_argument("--full-data", action="store_true",
+                         help="Train on the ENTIRE train split (~626 files) instead of the "
+                              "67-per-class (~201) subset. Slower but matches the real dataset.")
     args = parser.parse_args()
     model_keys = args.models.split(",")
     seeds = [int(s) for s in args.seeds.split(",")]
@@ -210,8 +254,13 @@ def main():
     y_val = label_encoder.transform(val_df["class"])
     y_test = label_encoder.transform(test_df["class"])
 
-    is_new_file = not os.path.exists(RESULTS_CSV)
-    csv_file = open(RESULTS_CSV, "a", newline="", encoding="utf-8")
+    # Full-data runs go to their own CSV -- keeps the original 201-subset study
+    # (already analyzed/documented in README.md section 5.2) untouched and avoids
+    # silently mixing two different train-set sizes in one results file.
+    results_csv = (os.path.join(DATA_DIR, "augmentation_variance_study_full_data.csv")
+                    if args.full_data else RESULTS_CSV)
+    is_new_file = not os.path.exists(results_csv)
+    csv_file = open(results_csv, "a", newline="", encoding="utf-8")
     writer = csv.writer(csv_file)
     if is_new_file:
         writer.writerow(["model", "seed", "augment", "n_train_used", "best_classifier",
@@ -231,15 +280,24 @@ def main():
                                 embed_batch_fn, f"{model_key} test embeddings")
 
         for seed in seeds:
-            train_df = pd.concat([
-                g.sample(n=min(len(g), TRAIN_SUBSET_PER_CLASS), random_state=seed)
-                for _, g in train_df_full.groupby("class")
-            ])
+            if args.full_data:
+                train_df = train_df_full
+            else:
+                train_df = pd.concat([
+                    g.sample(n=min(len(g), TRAIN_SUBSET_PER_CLASS), random_state=seed)
+                    for _, g in train_df_full.groupby("class")
+                ])
             train_labels = label_encoder.transform(train_df["class"])
 
             for augment in (False, True):
                 desc = f"{model_key} seed={seed} augment={augment}"
                 print(f"\n--- {desc} ---")
+                # Seed both random modules so WHICH augmented variant each file gets
+                # (make_augmented_version draws from `random`) is reproducible per
+                # (seed, augment) config -- matters most in --full-data mode where
+                # train_df itself no longer varies with the seed.
+                random.seed(seed)
+                np.random.seed(seed)
                 res = evaluate_config(
                     load_audio_fn, embed_batch_fn, list(train_df["matched_path"]), train_labels,
                     X_val, y_val, X_test, y_test, class_names, augment, model_key,
@@ -253,7 +311,7 @@ def main():
 
     csv_file.close()
     print("\n" + "=" * 70)
-    print(f"DONE. Results appended to {RESULTS_CSV}")
+    print(f"DONE. Results appended to {results_csv}")
     print("=" * 70)
 
 
