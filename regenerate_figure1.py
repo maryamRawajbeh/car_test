@@ -1,77 +1,94 @@
 # -*- coding: utf-8 -*-
-"""Regenerates Figure 1 (three-tier architecture diagram) with the current,
-accurate model list, matching the original's visual style, then overwrites the
-embedded image bytes directly inside the .docx zip (docx stores images as plain
-files in word/media/, referenced by relationship id -- overwriting the file in
-place keeps the existing embedding/position/caption untouched)."""
-import zipfile
-import shutil
+r"""Figure 3.2 -- UML use-case diagram, redrawn to cover all fourteen use cases
+(the eleven original flows plus Ask GarageAI, Check Severity and Manage Account).
+
+  processed_data/report_charts/use_case_diagram.png
+"""
+import os
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
+import matplotlib.patches as mp
 
-DOCX = r"C:\Users\hp\Downloads\GarageAI_Research_Paper.docx"
-MEDIA_PATH = "word/media/91ac28b81c4fd5b1163f63f84ea69f6d4543ff54.png"
-OUT_PNG = "figure1_regenerated.png"
+matplotlib.rcParams["font.family"] = "DejaVu Sans"
+OUT = r"processed_data/report_charts"
+os.makedirs(OUT, exist_ok=True)
 
-fig, ax = plt.subplots(figsize=(11, 5.5), dpi=200)
-ax.set_xlim(0, 11)
-ax.set_ylim(0, 5.5)
-ax.axis("off")
-ax.set_title("Three-Tier GarageAI System Architecture", fontsize=20, fontweight="bold",
-              color="#1a3a5c", pad=20)
+NAVY = "#16324a"; EDGE = "#3d63a0"; OVAL = "#eef3fb"; GREY = "#666"
 
-boxes = [
-    (0.3, 2.0, 3.0, 1.6, "#2c5578", "React Frontend\n(garageai-frontend)",
-     "Vite + React + TS\nport 5173"),
-    (4.0, 2.0, 3.0, 1.6, "#1a9e94", "Node.js Gateway\n(garageai-backend)",
-     "Express + Swagger\nport 5000"),
-    (7.7, 2.0, 3.0, 1.6, "#16324a", "Python Inference\n(garageai-audio-analysis)",
-     "FastAPI + Swagger\nport 8001"),
+GROUPS = [
+    ("Diagnosis", [
+        "Capture Audio Input", "Record Audio via Microphone", "Upload Audio File",
+        "Classify Vehicle Sound", "View Classification Result", "View Prediction History",
+        "Ask GarageAI (Chat)", "Check Severity",
+    ]),
+    ("Account", ["Sign Up", "Log In", "Reset Password", "Manage Account"]),
+    ("Settings", ["Change Display Theme"]),
+    ("Info", ["View About Page"]),
 ]
-for x, y, w, h, color, title, sub in boxes:
-    ax.add_patch(mpatches.FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.05",
-                                          linewidth=0, facecolor=color))
-    ax.text(x + w / 2, y + h * 0.62, title, ha="center", va="center",
-            color="white", fontsize=13, fontweight="bold")
-    ax.text(x + w / 2, y + h * 0.28, sub, ha="center", va="center",
-            color="white", fontsize=10.5)
 
-ax.annotate("", xy=(4.0, 2.9), xytext=(3.3, 2.9),
-            arrowprops=dict(arrowstyle="<->", color="#555", lw=1.8))
-ax.annotate("", xy=(7.7, 2.9), xytext=(7.0, 2.9),
-            arrowprops=dict(arrowstyle="<->", color="#555", lw=1.8))
+fig, ax = plt.subplots(figsize=(11.5, 9.2), dpi=200)
+ax.set_xlim(0, 20); ax.set_ylim(0, 18); ax.axis("off")
+ax.set_title("Use Case Diagram - GarageAI", fontsize=17, fontweight="bold",
+             color=NAVY, pad=12)
 
-ax.text(1.8, 4.2, "Mic recording /\nFile upload", ha="center", fontsize=10.5,
-        style="italic", color="#333")
-ax.text(3.65, 3.55, "audio file /\nJSON result", ha="center", fontsize=10, color="#333")
-ax.text(7.35, 3.55, "audio file /\nJSON result", ha="center", fontsize=10, color="#333")
-ax.text(9.2, 4.5,
-        "Always-on: Traditional ML, CNN,\nYAMNet, PANNs, EfficientAT,\n"
-        "\"other\"-class gate, Ensemble\nOpt-in: AST, CLAP, PaSST, BEATs",
-        ha="center", fontsize=9.5, style="italic", color="#333")
+# ---- actor (stick figure) ----
+ax_x, ax_y = 1.7, 9.0
+ax.add_patch(mp.Circle((ax_x, ax_y + 1.7), 0.42, fill=False, lw=2, ec=NAVY))
+ax.plot([ax_x, ax_x], [ax_y + 1.28, ax_y - 0.2], lw=2, color=NAVY)
+ax.plot([ax_x - 0.9, ax_x + 0.9], [ax_y + 0.8, ax_y + 0.8], lw=2, color=NAVY)
+ax.plot([ax_x, ax_x - 0.8], [ax_y - 0.2, ax_y - 1.3], lw=2, color=NAVY)
+ax.plot([ax_x, ax_x + 0.8], [ax_y - 0.2, ax_y - 1.3], lw=2, color=NAVY)
+ax.text(ax_x, ax_y - 2.0, "Driver / User", ha="center", va="center",
+        fontsize=12, fontweight="bold", color=NAVY)
 
-plt.tight_layout()
-plt.savefig(OUT_PNG, dpi=200, facecolor="white")
-plt.close()
-print(f"Regenerated: {OUT_PNG}")
+# ---- system boundary ----
+bx0, bx1, by0, by1 = 4.6, 19.4, 0.7, 16.2
+ax.add_patch(mp.FancyBboxPatch((bx0, by0), bx1 - bx0, by1 - by0,
+             boxstyle="round,pad=0.02", fill=False, lw=1.8, ec=NAVY))
+ax.text((bx0 + bx1) / 2, by1 - 0.5, "GarageAI System", ha="center", va="center",
+        fontsize=13, fontweight="bold", color=NAVY, style="italic")
+ax.plot([bx0, bx1], [by1 - 1.0, by1 - 1.0], lw=1.0, color=NAVY)
 
-shutil.copy(DOCX, DOCX + ".tmp_before_fig1")
-with zipfile.ZipFile(DOCX, "r") as zin:
-    names = zin.namelist()
-    assert MEDIA_PATH in names, f"{MEDIA_PATH} not found in {DOCX}"
+# ---- ovals in two columns ----
+col_x = [8.6, 15.4]
+ow, oh = 6.4, 0.95
+left = GROUPS[0][1]
+right = sum([g[1] for g in GROUPS[1:]], [])
+group_of = {}
+for gname, ucs in GROUPS:
+    for u in ucs:
+        group_of[u] = gname
 
-# Rewrite the zip, replacing only the one media file's bytes.
-tmp_out = DOCX + ".tmp_new"
-with zipfile.ZipFile(DOCX, "r") as zin, zipfile.ZipFile(tmp_out, "w", zipfile.ZIP_DEFLATED) as zout:
-    for item in zin.infolist():
-        data = zin.read(item.filename)
-        if item.filename == MEDIA_PATH:
-            with open(OUT_PNG, "rb") as f:
-                data = f.read()
-            print(f"Replaced {item.filename}: {len(zin.read(item.filename))} -> {len(data)} bytes")
-        zout.writestr(item, data)
 
-shutil.move(tmp_out, DOCX)
-print("Saved.")
+def place(items, cx, y_top):
+    ys = []
+    y = y_top
+    last_group = None
+    for u in items:
+        g = group_of[u]
+        if g != last_group:
+            ax.text(cx - ow / 2 - 0.1, y + 0.72, g, ha="left", va="center",
+                    fontsize=10.5, fontweight="bold", color=GREY)
+            last_group = g
+            y -= 0.55
+        ax.add_patch(mp.FancyBboxPatch((cx - ow / 2, y - oh / 2), ow, oh,
+                     boxstyle="round,pad=0.02,rounding_size=0.48", lw=1.4,
+                     ec=EDGE, fc=OVAL))
+        ax.text(cx, y, u, ha="center", va="center", fontsize=10, color=NAVY)
+        ys.append((cx - ow / 2, y))
+        y -= 1.5
+    return ys
+
+
+anchors = []
+anchors += place(left, col_x[0], 14.2)
+anchors += place(right, col_x[1], 14.2)
+
+# ---- association lines from the actor ----
+for xL, yL in anchors:
+    ax.plot([ax_x + 0.95, xL], [ax_y, yL], lw=0.9, color="#8a97a4", zorder=0)
+
+fig.savefig(f"{OUT}/use_case_diagram.png", bbox_inches="tight")
+plt.close(fig)
+print("use_case_diagram.png written")
