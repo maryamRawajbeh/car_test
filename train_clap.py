@@ -67,8 +67,8 @@ from sklearn.metrics import (
 
 from audio_common import load_clean_audio as _shared_load_clean_audio
 
-BASE_DIR = r"C:\Users\hp\Desktop\car_test"
-DATA_DIR = os.path.join(BASE_DIR, "processed_data")
+BASE_DIR = os.environ.get("CAR_TEST_RAW_DATA_DIR", r"C:\Users\hp\Desktop\car_test")
+DATA_DIR = os.environ.get("CAR_TEST_OUTPUT_DIR", os.path.join(BASE_DIR, "processed_data"))
 
 CLAP_CHECKPOINT = "laion/clap-htsat-unfused"
 CLAP_SR = 48000            # CLAP requires 48kHz mono input

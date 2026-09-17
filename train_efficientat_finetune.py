@@ -87,8 +87,8 @@ from sklearn.utils.class_weight import compute_class_weight
 
 from audio_common import load_clean_audio as _shared_load_clean_audio
 
-BASE_DIR = r"C:\Users\hp\Desktop\car_test"
-DATA_DIR = os.path.join(BASE_DIR, "processed_data")
+BASE_DIR = os.environ.get("CAR_TEST_RAW_DATA_DIR", r"C:\Users\hp\Desktop\car_test")
+DATA_DIR = os.environ.get("CAR_TEST_OUTPUT_DIR", os.path.join(BASE_DIR, "processed_data"))
 EFFICIENTAT_VENDOR_DIR = os.path.join(BASE_DIR, "efficientat_vendor")
 sys.path.insert(0, EFFICIENTAT_VENDOR_DIR)  # so `models.mn.model` / `helpers.utils` resolve
 

@@ -63,13 +63,25 @@ from sklearn.metrics import (
 
 from audio_common import load_clean_audio as _shared_load_clean_audio
 
-BASE_DIR = r"C:\Users\hp\Desktop\car_test"
-DATA_DIR = os.path.join(BASE_DIR, "processed_data")
+BASE_DIR = os.environ.get("CAR_TEST_RAW_DATA_DIR", r"C:\Users\hp\Desktop\car_test")
+DATA_DIR = os.environ.get("CAR_TEST_OUTPUT_DIR", os.path.join(BASE_DIR, "processed_data"))
 
 AST_CHECKPOINT = "MIT/ast-finetuned-audioset-10-10-0.4593"
 AST_SR = 16000             # AST requires 16kHz mono input
 TARGET_DURATION = 5.0      # keep consistent with the rest of the project
 BATCH_SIZE = 8             # AST is heavier than PANNs -- smaller batches on CPU
+
+# Added 2026-09-08 (verification re-run on the ablation_results/no_augmentation split):
+# this script originally used the FULL 624-file train split, unlike train_clap.py/
+# train_passt.py/train_beats.py which already subsample train for CPU-time practicality
+# (measured ~55-65s/8-clip batch on this machine's 2 logical CPUs -- full train+val+test
+# would take ~2 hours for AST alone). Applying the SAME class-balanced subsampling
+# convention here (same TRAIN_SUBSET_PER_CLASS/SEED as CLAP/PaSST/BEATs) for consistency
+# and to keep the verification run bounded -- val/test stay FULL and untouched, so
+# reported metrics remain directly comparable to every other model. Flagged explicitly
+# in the verification report as a deviation from this script's original full-train default.
+TRAIN_SUBSET_PER_CLASS = 67  # ~200 total across 3 classes (vs 624 full) -- fixed seed below
+TRAIN_SUBSET_SEED = 42
 
 CLASSIFIER_GRID = {
     "Logistic Regression (C=1)": lambda: LogisticRegression(C=1, max_iter=2000, class_weight="balanced"),
@@ -158,11 +170,17 @@ def main():
             if skipped:
                 print(f"   (skipping {skipped} file(s) already flagged as corrupted by preprocessing.py)")
 
-    train_df = doc_df[doc_df["split_assigned"] == "train"]
+    train_df_full = doc_df[doc_df["split_assigned"] == "train"]
     val_df = doc_df[doc_df["split_assigned"] == "val"]
     test_df = doc_df[doc_df["split_assigned"] == "test"]
+
+    train_df = pd.concat([
+        g.sample(n=min(len(g), TRAIN_SUBSET_PER_CLASS), random_state=TRAIN_SUBSET_SEED)
+        for _, g in train_df_full.groupby("class")
+    ])
     print(f"Using the SAME leakage-safe split as the rest of the project: "
-          f"train={len(train_df)}, val={len(val_df)}, test={len(test_df)}")
+          f"train={len(train_df_full)} (subsampled to {len(train_df)}, class-balanced, seed={TRAIN_SUBSET_SEED}), "
+          f"val={len(val_df)}, test={len(test_df)}")
     print("(No augmentation on train -- same lesson learned from YAMNet/PANNs: augmenting a frozen "
           "pretrained model's input tends to confuse its small classifier head more than help.)")
 
@@ -216,6 +234,11 @@ def main():
     print("\n" + test_res["report"])
 
     with open(os.path.join(DATA_DIR, "ast_report.txt"), "w", encoding="utf-8") as f:
+        f.write(f"NOTE: classifier head trained on a class-balanced SUBSET of train "
+                f"({len(train_df)}/{len(train_df_full)} files, seed={TRAIN_SUBSET_SEED}) for "
+                f"CPU-time practicality (added 2026-09-08, matching train_clap.py/train_passt.py/"
+                f"train_beats.py's existing convention) -- val/test are FULL and untouched, so "
+                f"these numbers are directly comparable to every other model's report.\n\n")
         f.write(f"BEST CLASSIFIER HEAD: {best_name}\n\n")
         f.write("=== Validation results (all candidates) ===\n")
         for name, res in val_results.items():

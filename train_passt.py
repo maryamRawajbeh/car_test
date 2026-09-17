@@ -72,8 +72,8 @@ from sklearn.metrics import (
 
 from audio_common import load_clean_audio as _shared_load_clean_audio
 
-BASE_DIR = r"C:\Users\hp\Desktop\car_test"
-DATA_DIR = os.path.join(BASE_DIR, "processed_data")
+BASE_DIR = os.environ.get("CAR_TEST_RAW_DATA_DIR", r"C:\Users\hp\Desktop\car_test")
+DATA_DIR = os.environ.get("CAR_TEST_OUTPUT_DIR", os.path.join(BASE_DIR, "processed_data"))
 
 PASST_SR = 32000           # PaSST requires 32kHz mono input (same as PANNs)
 TARGET_DURATION = 5.0      # keep consistent with the rest of the project
